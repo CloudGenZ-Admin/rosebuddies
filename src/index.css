@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/* If you need to map custom colors in Tailwind v4, you can do it via CSS variables, 
+   but we will use exact HEX codes in the components to make it instantly work for you! */
+
+@layer utilities {
+  .draw-path {
+    stroke-dasharray: 1000;
+    stroke-dashoffset: 1000;
+    animation: draw 1.5s ease-out forwards;
+    animation-delay: 0.5s;
+  }
+  .scribble-hover {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    transition: stroke-dashoffset 0.4s ease-in-out;
+  }
+  .group:hover .scribble-hover {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
