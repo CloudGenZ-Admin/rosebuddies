@@ -1,16 +1,54 @@
 @import "tailwindcss";
 
-
 @theme {
-  --color-brand-dark: #2A2A2A;
-  --color-brand-light: #FDF8F5;
-  --color-brand-cream: #FAF9F6;
-  --color-brand-primary: #FD5E53;
-  --color-brand-secondary: #E2725B;
-  --color-brand-accent: #E1AD01;
-  --color-brand-yellow: #FDE047;
-  --color-brand-pink: #FFD6E0;
-  --color-brand-pink-dark: #FFB3C6;
-  --color-brand-pink-light: #FFE9EE;
-  --color-brand-peach: #DCAE96;
+  /* =========================================
+     1. CORE BACKGROUNDS & BRAND COLORS
+     ========================================= */
+  
+  /* Dark contrast text: Deep "Lemon Tree Bark" (Dark Golden-Brown). */
+  --color-brand-dark: #2B2601;      
+  
+  /* Main Background: A solid, distinct Lemonade Yellow. Absolutely no white. */
+  --color-brand-light: #FDF597;     
+  
+  /* Section Background: Lemon Sorbet. Lighter than main bg but 100% solid. */
+  --color-brand-cream: #FFF8B0;     
+  
+  /* Primary Action Color: Pure, aggressive Lemon Yellow */
+  --color-brand-primary: #FFE600;   
+  
+  /* Secondary Color: A deep, rich Golden/Amber Lemon */
+  --color-brand-secondary: #FFB300; 
+  
+  /* Accent Color: Lime Green representing the lemon leaf */
+  --color-brand-accent: #8CD136;    
+  
+  /* Extra Shades for gradients, hover states, or shadows */
+  --color-brand-lemon-light: #FFF05A; 
+  --color-brand-lemon: #FFE600;       
+  --color-brand-lemon-dark: #D49200;  
+  
+  --color-brand-lime: #A2E233;      
+  --color-brand-lime-dark: #4A8A19;   
+
+  /* =========================================
+     2. TEXT & HOVER COLORS (High Contrast)
+     ========================================= */
+     
+  /* Standard body text (Highly readable on yellow backgrounds) */
+  --color-brand-text: var(--color-brand-dark); 
+  
+  /* Muted text for subtitles/secondary info (A softer olive-brown) */
+  --color-brand-text-muted: #5E5513; 
+
+  /* Link & Colored Text: Must be much darker than normal brand colors to be readable on yellow */
+  --color-brand-text-primary: #8A5A00; /* Deep Amber/Bronze for links */
+  --color-brand-text-primary-hover: #B87A00; /* Slightly lighter bronze for hover */
+  
+  --color-brand-text-accent: #2A5A0C; /* Very dark forest/lime green for text */
+  --color-brand-text-accent-hover: var(--color-brand-lime-dark); /* #4A8A19 */
+
+  /* Button Text Colors: What color should text be when it's INSIDE a colored button? */
+  --color-brand-on-primary: var(--color-brand-dark); /* Use dark text on yellow buttons */
+  --color-brand-on-accent: #0F2900; /* Deepest green/black for lime green buttons */
 }
