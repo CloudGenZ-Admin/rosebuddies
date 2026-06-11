@@ -4,15 +4,25 @@ import Link from 'next/link';
 import { Menu, X, Mail, MapPin, ArrowRight, Heart, Sparkles, ChevronDown, Check } from 'lucide-react';
 
 const OTTAWA_AREAS = [
-  { id: "centretown", label: "Centretown / Downtown" },
-  { id: "glebe", label: "The Glebe / Old Ottawa South" },
-  { id: "westboro", label: "Westboro / Hintonburg" },
-  { id: "kanata", label: "Kanata / Stittsville" },
-  { id: "orleans", label: "Orléans" },
-  { id: "barrhaven", label: "Barrhaven / Riverside South" },
+  { id: "west-carleton", label: "West Carleton" },
+  { id: "kanata", label: "Kanata" },
+  { id: "goulbourn", label: "Goulbourn" },
   { id: "nepean", label: "Nepean" },
+  { id: "rideau", label: "Rideau" },
+  { id: "ottawa", label: "Ottawa" },
   { id: "gloucester", label: "Gloucester" },
-  { id: "other", label: "Other / Just outside Ottawa" },
+  { id: "osgoode", label: "Osgoode" },
+  { id: "cumberland", label: "Cumberland" },
+  { id: "clarence", label: "Clarence" },
+  { id: "russell", label: "Russell" },
+  { id: "cambridge", label: "Cambridge" },
+  { id: "south-gower", label: "South Gower" },
+  { id: "renfrew-county", label: "Renfrew County" },
+  { id: "lanark-county", label: "Lanark County" },
+  { id: "frontenac-county", label: "Frontenac County" },
+  { id: "leeds-and-grenville", label: "Leeds and Grenville" },
+  { id: "prescott-and-russell", label: "Prescott and Russell" },
+  { id: "stormont-dundas-and-glengarry", label: "Stormont, Dundas and Glengarry" }
 ];
 
 export default function Navbar() {
