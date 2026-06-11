@@ -2,53 +2,49 @@
 
 @theme {
   /* =========================================
-     1. CORE BACKGROUNDS & BRAND COLORS
+     1. CORE BACKGROUNDS & BRAND COLORS (From Photo)
      ========================================= */
   
-  /* Dark contrast text: Deep "Lemon Tree Bark" (Dark Golden-Brown). */
-  --color-brand-dark: #2B2601;      
+  /* Main Background: Soft, pale buttery yellow directly from the image background */
+  --color-brand-light: #FFF8B0;     
   
-  /* Main Background: A solid, distinct Lemonade Yellow. Absolutely no white. */
-  --color-brand-light: #FDF597;     
+  /* Section Background: Pure white highlights reflecting off the lemons */
+  --color-brand-cream: #FFFFFF;     
   
-  /* Section Background: Lemon Sorbet. Lighter than main bg but 100% solid. */
-  --color-brand-cream: #FFF8B0;     
+  /* Primary Action: Bright, juicy Lemon flesh */
+  --color-brand-primary: #FFE51E;   
   
-  /* Primary Action Color: Pure, aggressive Lemon Yellow */
-  --color-brand-primary: #FFE600;   
+  /* Secondary Color: Warm, golden Lemon edge */
+  --color-brand-secondary: #F8B800; 
   
-  /* Secondary Color: A deep, rich Golden/Amber Lemon */
-  --color-brand-secondary: #FFB300; 
+  /* Accent Color: Vibrant, acidic Lime flesh */
+  --color-brand-accent: #9FD62A;    
   
-  /* Accent Color: Lime Green representing the lemon leaf */
-  --color-brand-accent: #8CD136;    
+  /* Extra Shades */
+  --color-brand-lime-dark: #3AA121;  /* Rich green from Lime rind & bright Mint leaves */
   
-  /* Extra Shades for gradients, hover states, or shadows */
-  --color-brand-lemon-light: #FFF05A; 
-  --color-brand-lemon: #FFE600;       
-  --color-brand-lemon-dark: #D49200;  
+ 
+  --color-brand-dark: #1A5415;      
   
-  --color-brand-lime: #A2E233;      
-  --color-brand-lime-dark: #4A8A19;   
+  /* Shadow: Lemon ke neeche jo olive/greenish shadow hai */
+  --color-brand-lemon-dark: #C9BE65;  
 
-  /* =========================================
-     2. TEXT & HOVER COLORS (High Contrast)
-     ========================================= */
+
      
-  /* Standard body text (Highly readable on yellow backgrounds) */
+  /* Standard body text: Deep Mint Green (kaala nahi lagega, fresh lagega) */
   --color-brand-text: var(--color-brand-dark); 
   
-  /* Muted text for subtitles/secondary info (A softer olive-brown) */
-  --color-brand-text-muted: #5E5513; 
+  /* Muted text: Darkened olive shadow */
+  --color-brand-text-muted: #857E3B; 
 
-  /* Link & Colored Text: Must be much darker than normal brand colors to be readable on yellow */
-  --color-brand-text-primary: #8A5A00; /* Deep Amber/Bronze for links */
-  --color-brand-text-primary-hover: #B87A00; /* Slightly lighter bronze for hover */
+ 
+  --color-brand-text-primary: #7A3E34; 
+  --color-brand-text-primary-hover: var(--color-brand-lime-dark); 
   
-  --color-brand-text-accent: #2A5A0C; /* Very dark forest/lime green for text */
-  --color-brand-text-accent-hover: var(--color-brand-lime-dark); /* #4A8A19 */
+  /* Accent Text: Bright rich green */
+  --color-brand-text-accent: #3AA121; 
 
-  /* Button Text Colors: What color should text be when it's INSIDE a colored button? */
-  --color-brand-on-primary: var(--color-brand-dark); /* Use dark text on yellow buttons */
-  --color-brand-on-accent: #0F2900; /* Deepest green/black for lime green buttons */
+  /* Button Text */
+  --color-brand-on-primary: var(--color-brand-dark); 
+  --color-brand-on-accent: #FFFFFF; 
 }

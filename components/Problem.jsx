@@ -15,10 +15,10 @@ export default function Problem() {
   };
 
   return (
-    <section className="py-24 px-6 md:px-12 bg-brand-pink-light rounded-[48px] mx-4 shadow-sm relative z-20 overflow-hidden border-2 border-brand-pink-dark/50">
+    <section className="py-24 px-6 md:px-12 bg-brand-cream rounded-[48px] mx-4 shadow-sm relative z-20 overflow-hidden border-2 border-brand-lemon-dark/50">
       
       {/* Doodle 1 */}
-      <div className={`absolute top-10 left-10 md:left-32 w-24 h-24 text-brand-primary transition-all duration-1000 delay-300 pointer-events-none ${isVisible ? 'opacity-40 animate-float' : 'opacity-0 translate-y-10'}`}>
+      <div className={`absolute top-10 left-10 md:left-32 w-24 h-24 text-brand-accent transition-all duration-1000 delay-300 pointer-events-none ${isVisible ? 'opacity-40 animate-float' : 'opacity-0 translate-y-10'}`}>
         <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
           <path d="M20 50 C20 30, 45 30, 45 50 C45 65, 30 70, 20 80 C25 70, 20 65, 20 50 Z" />
           <path d="M50 40 C50 20, 80 20, 80 40 C80 55, 65 60, 50 70 C55 60, 50 55, 50 40 Z" />
@@ -37,7 +37,7 @@ export default function Problem() {
       </div>
 
       <div className="max-w-4xl mx-auto text-center relative z-10" ref={ref}>
-        <h2 className="text-3xl md:text-5xl font-serif text-brand-dark mb-10 leading-snug">
+        <h2 className="text-3xl md:text-5xl font-serif text-brand-text mb-10 leading-snug">
           Friendship shouldn't feel like <br className="hidden md:block"/>
           <span className="relative inline-block">
             breaking into someone else's circle.
@@ -49,28 +49,28 @@ export default function Problem() {
           </span>
         </h2>
         
-        <div className={`text-xl md:text-2xl font-serif leading-relaxed transition-colors duration-1000 space-y-6 ${isVisible ? 'text-brand-secondary' : 'text-brand-dark/20'}`}>
+        <div className={`text-xl md:text-2xl font-serif leading-relaxed transition-colors duration-1000 space-y-6 ${isVisible ? 'text-brand-text-primary' : 'text-brand-text/20'}`}>
           <p>
             As people who were new to the city, we found ourselves rebuilding our social circles from scratch. We attended community events. We joined groups. We introduced ourselves.
           </p>
           <p>
             People were kind, but we still went home feeling like visitors in someone else's story. Most friendship circles were already formed.
           </p>
-          <p className={`font-bold transition-colors duration-1000 delay-300 ${isVisible ? 'text-brand-dark' : 'text-brand-dark/20'}`}>
+          <p className={`font-bold transition-colors duration-1000 delay-300 ${isVisible ? 'text-brand-text' : 'text-brand-text/20'}`}>
             The challenge wasn't meeting people. The challenge was finding a place where we truly belonged.
           </p>
         </div>
 
         <div className={`mt-16 transition-opacity duration-1000 delay-500 flex flex-col items-center ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-          <p className="text-xl font-bold text-brand-primary mb-6">That's why we created Rosebuddies.</p>
+          <p className="text-xl font-bold text-brand-text-accent mb-6">That's why we created Rosebuddies.</p>
           
           <button 
             onClick={scrollToNext}
             className="group flex flex-col items-center justify-center cursor-pointer focus:outline-none"
             aria-label="Scroll to next section"
           >
-            <div className="w-16 h-16 bg-brand-dark rounded-full flex items-center justify-center shadow-[4px_4px_0px] shadow-brand-pink-dark group-hover:shadow-[6px_6px_0px] group-hover:shadow-brand-accent group-hover:-translate-y-1 transition-all duration-300">
-              <ArrowDown className="text-brand-pink-light group-hover:animate-bounce" size={32} />
+            <div className="w-16 h-16 bg-brand-dark rounded-full flex items-center justify-center shadow-[4px_4px_0px] shadow-brand-lemon-dark group-hover:shadow-[6px_6px_0px] group-hover:shadow-brand-accent group-hover:-translate-y-1 transition-all duration-300">
+              <ArrowDown className="text-brand-cream group-hover:animate-bounce" size={32} />
             </div>
           </button>
         </div>

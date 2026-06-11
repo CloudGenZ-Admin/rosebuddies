@@ -20,56 +20,58 @@ export default function WaitlistForm() {
   };
 
   return (
-    // Replaced pink background with Lemonade Yellow
-    <section id="waitlist" className="py-32 px-6 relative overflow-hidden z-20 bg-brand-light">
+    // Background: Soft Buttery Yellow
+    <section id="waitlist" className="py-20 md:py-32 px-4 sm:px-6 relative overflow-hidden z-20 bg-brand-light">
       
       {/* --- BACKGROUND ANIMATED WAVES --- */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute bottom-0 left-0 w-[200%] h-[45%] md:h-[60%] flex animate-wave-1">
-          <WaveSVG className="w-1/2 h-full text-brand-lemon-light fill-current" />
-          <WaveSVG className="w-1/2 h-full text-brand-lemon-light fill-current" />
+          {/* Waves using the new Lemon shadow/dark shade for subtle blending */}
+          <WaveSVG className="w-1/2 h-full text-brand-lemon-dark/20 fill-current" />
+          <WaveSVG className="w-1/2 h-full text-brand-lemon-dark/20 fill-current" />
         </div>
         <div className="absolute bottom-0 left-0 w-[200%] h-[30%] md:h-[40%] flex animate-wave-2">
+          {/* Foreground wave using juicy primary lemon */}
           <WaveSVG className="w-1/2 h-full text-brand-primary/40 fill-current" />
           <WaveSVG className="w-1/2 h-full text-brand-primary/40 fill-current" />
         </div>
       </div>
 
       {/* --- THE FORM CONTAINER --- */}
-      {/* Replaced off-white with Lemon Sorbet (Cream), and dark gray with Brand Dark */}
-      <div className="max-w-4xl mx-auto bg-brand-cream border-4 border-brand-dark rounded-[40px] p-8 md:p-16 shadow-[12px_12px_0px_var(--color-brand-dark)] relative z-10 mt-8">
+      {/* Container: Pure White (Cream) with Deep Mint (Dark) borders */}
+      <div className="max-w-4xl mx-auto bg-brand-cream border-4 border-brand-dark rounded-[32px] md:rounded-[40px] p-6 sm:p-10 md:p-16 shadow-[6px_6px_0px_var(--color-brand-dark)] md:shadow-[12px_12px_0px_var(--color-brand-dark)] relative z-10 mt-6 sm:mt-8 mx-2 sm:mx-auto">
         
-        {/* Decorative Washi Tape: Amber/Secondary */}
-        <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-32 h-8 bg-brand-secondary/80 backdrop-blur-md -rotate-2 border-2 border-brand-dark shadow-sm z-20"></div>
+        {/* Decorative Washi Tape: Golden Lemon (Secondary) */}
+        <div className="absolute -top-3 md:-top-4 left-1/2 -translate-x-1/2 w-24 md:w-32 h-6 md:h-8 bg-brand-secondary/80 backdrop-blur-md -rotate-2 border-2 border-brand-dark shadow-sm z-20"></div>
 
-        <div className="text-center mb-12 relative z-10">
-          <h2 className="text-4xl md:text-6xl font-serif text-brand-dark inline-block relative mb-6">
+        <div className="text-center mb-8 md:mb-12 relative z-10">
+          <h2 className="text-3xl sm:text-4xl md:text-6xl font-serif text-brand-dark inline-block relative mb-4 md:mb-6">
             Ready To Find Your Circle?
-            {/* Replaced Red Star with Lime Dark */}
-            <svg className="absolute -right-12 -top-8 w-10 h-10 text-brand-lime-dark animate-bounce" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round">
+            {/* Doodle: Rich Forest Green (Lime Dark) */}
+            <svg className="absolute -right-4 md:-right-12 -top-6 md:-top-8 w-8 h-8 md:w-10 md:h-10 text-brand-lime-dark animate-bounce" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round">
               <path d="M50 10 L60 40 L90 40 L65 60 L75 90 L50 70 L25 90 L35 60 L10 40 L40 40 Z" />
             </svg>
           </h2>
-          <p className="text-xl md:text-2xl text-brand-dark/80 font-medium font-sans max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-brand-text-primary font-medium font-sans max-w-2xl mx-auto leading-relaxed px-2 sm:px-0">
             The first conversation could change everything. Take the Interest Check, join a Meet & Greet, and start building meaningful friendships in real life.
           </p>
         </div>
         
         {status === 'success' ? (
-          <div className="text-center py-16 flex flex-col items-center animate-in fade-in duration-500">
-            <div className="relative w-32 h-32 mb-6">
-              {/* Success Ping Ring: Lime Dark */}
-              <div className="absolute inset-0 border-4 border-brand-lime-dark rounded-full animate-ping opacity-20"></div>
+          <div className="text-center py-10 md:py-16 flex flex-col items-center animate-in fade-in duration-500">
+            <div className="relative w-24 h-24 md:w-32 md:h-32 mb-6">
+              {/* Success Ping Ring: Accent Lime */}
+              <div className="absolute inset-0 border-4 border-brand-accent rounded-full animate-ping opacity-30"></div>
               {/* Success Circle: Primary Lemon */}
               <div className="absolute inset-0 bg-brand-primary border-4 border-brand-dark rounded-full flex items-center justify-center shadow-[4px_4px_0px_var(--color-brand-dark)]">
-                <Check className="text-brand-dark" size={50} strokeWidth={3} />
+                <Check className="text-brand-dark w-10 h-10 md:w-[50px] md:h-[50px]" strokeWidth={3} />
               </div>
             </div>
-            <h3 className="text-4xl font-serif text-brand-dark mb-4">You're on the list!</h3>
-            <p className="text-xl text-brand-dark/70 font-medium">Keep an eye on your inbox. Warm vibes incoming.</p>
+            <h3 className="text-3xl md:text-4xl font-serif text-brand-dark mb-3 md:mb-4">You're on the list!</h3>
+            <p className="text-lg md:text-xl text-brand-text-primary font-medium">Keep an eye on your inbox. Warm vibes incoming.</p>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="text-2xl md:text-3xl leading-[2.5] font-serif text-brand-dark relative z-10">
+          <form onSubmit={handleSubmit} className="text-xl sm:text-2xl md:text-3xl leading-[2.2] md:leading-[2.5] font-serif text-brand-dark relative z-10">
             
             <p className="mb-8 text-center md:text-left">
               Hi, my name is 
@@ -78,7 +80,7 @@ export default function WaitlistForm() {
                   type="text" 
                   required 
                   placeholder="[ Your Name ]" 
-                  className="inline-input w-48" 
+                  className="inline-input w-[140px] sm:w-48" 
                   onFocus={() => setFocusedInput('name')}
                   onBlur={() => setFocusedInput(null)}
                 /> 
@@ -89,7 +91,7 @@ export default function WaitlistForm() {
                   type="email" 
                   required 
                   placeholder="[ Your Email ]" 
-                  className="inline-input w-72" 
+                  className="inline-input w-[180px] sm:w-72" 
                   onFocus={() => setFocusedInput('email')}
                   onBlur={() => setFocusedInput(null)}
                 />
@@ -100,7 +102,7 @@ export default function WaitlistForm() {
               I'm currently hanging out in 
               <span className={`input-wrapper ${focusedInput === 'location' ? 'active' : ''}`}>
                 <select 
-                  className="inline-input cursor-pointer appearance-none text-center"
+                  className="inline-input cursor-pointer appearance-none text-center w-[160px] sm:w-auto"
                   onFocus={() => setFocusedInput('location')}
                   onBlur={() => setFocusedInput(null)}
                   defaultValue=""
@@ -116,11 +118,11 @@ export default function WaitlistForm() {
               </span>.
             </p>
 
-            <p className="mb-12 text-center md:text-left">
+            <p className="mb-10 md:mb-12 text-center md:text-left">
               I'd describe my social energy as:
               <span className={`input-wrapper ${focusedInput === 'energy' ? 'active' : ''}`}>
                 <select 
-                  className="inline-input cursor-pointer appearance-none text-center w-80"
+                  className="inline-input cursor-pointer appearance-none text-center w-[180px] sm:w-80"
                   onFocus={() => setFocusedInput('energy')}
                   onBlur={() => setFocusedInput(null)}
                   defaultValue=""
@@ -133,29 +135,29 @@ export default function WaitlistForm() {
               </span>.
             </p>
 
-            <div className="mt-16 text-center">
-              <p className="mb-8 font-black text-2xl md:text-3xl text-brand-lime-dark uppercase tracking-wide font-sans">
+            <div className="mt-12 md:mt-16 text-center">
+              <p className="mb-6 md:mb-8 font-black text-xl sm:text-2xl md:text-3xl text-brand-lime-dark uppercase tracking-wide font-sans">
                 Less Scrolling. More Living.<br/>
                 <span className="text-brand-dark">Log Off. Show Up. Belong.</span>
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
                 {/* Submit Button: Dark background, Cream text, Lime shadow */}
                 <button 
                   type="submit" 
                   disabled={status === 'loading'}
-                  className="group relative inline-flex items-center justify-center bg-brand-dark text-brand-cream font-sans font-bold text-xl px-10 py-5 rounded-full hover:-translate-y-1 transition-transform disabled:opacity-70 disabled:hover:translate-y-0 w-full sm:w-auto border-4 border-brand-dark shadow-[6px_6px_0px_var(--color-brand-lime-dark)] hover:shadow-[8px_8px_0px_var(--color-brand-secondary)]"
+                  className="group relative inline-flex items-center justify-center bg-brand-dark text-brand-cream font-sans font-bold text-lg md:text-xl px-6 py-4 md:px-10 md:py-5 rounded-full hover:-translate-y-1 transition-transform disabled:opacity-70 disabled:hover:translate-y-0 w-full sm:w-auto border-4 border-brand-dark shadow-[4px_4px_0px_var(--color-brand-lime-dark)] md:shadow-[6px_6px_0px_var(--color-brand-lime-dark)] hover:shadow-[6px_6px_0px_var(--color-brand-secondary)] md:hover:shadow-[8px_8px_0px_var(--color-brand-secondary)]"
                 >
                   {status === 'loading' ? <Loader2 className="animate-spin mr-3" size={24} /> : null}
-                  {status === 'loading' ? 'Checking Vibes...' : '[ Find My Circle ]'}
+                  {status === 'loading' ? 'Checking Vibes...' : 'Find My Circle '}
                 </button>
                 
                 {/* Secondary Button: Lemon background, Dark text */}
                 <a 
                   href="#meet" 
-                  className="group relative inline-flex items-center justify-center bg-brand-primary text-brand-dark font-sans font-bold text-xl px-10 py-5 rounded-full hover:-translate-y-1 transition-transform w-full sm:w-auto border-4 border-brand-dark shadow-[6px_6px_0px_var(--color-brand-dark)] hover:shadow-[8px_8px_0px_var(--color-brand-lime-dark)]"
+                  className="group relative inline-flex items-center justify-center bg-brand-primary text-brand-dark font-sans font-bold text-lg md:text-xl px-6 py-4 md:px-10 md:py-5 rounded-full hover:-translate-y-1 transition-transform w-full sm:w-auto border-4 border-brand-dark shadow-[4px_4px_0px_var(--color-brand-dark)] md:shadow-[6px_6px_0px_var(--color-brand-dark)] hover:shadow-[6px_6px_0px_var(--color-brand-lime-dark)] md:hover:shadow-[8px_8px_0px_var(--color-brand-lime-dark)] hover:bg-brand-secondary text-center leading-snug"
                 >
-                  [ Join the Next Meet & Greet ]
+                   Join the Next Meet & Greet 
                 </a>
               </div>
             </div>
@@ -180,10 +182,15 @@ export default function WaitlistForm() {
         .input-wrapper {
           position: relative;
           display: inline-block;
-          margin: 0 0.5rem;
+          margin: 0 0.25rem;
+        }
+        @media (min-width: 768px) {
+          .input-wrapper {
+            margin: 0 0.5rem;
+          }
         }
 
-        /* Highlighter background uses primary lemon */
+        /* Highlighter background uses primary lemon (#FFE51E) */
         .input-wrapper::before {
           content: '';
           position: absolute;
@@ -203,40 +210,53 @@ export default function WaitlistForm() {
           transform: scaleX(1) rotate(-2deg);
         }
 
-        /* Input styling updated to Lime and Dark */
+        /* Input text style uses deep red/brown (Mint Stem) for contrast */
         .inline-input {
           border: none;
-          border-bottom: 4px dashed var(--color-brand-dark);
+          border-bottom: 3px dashed var(--color-brand-dark);
           background: transparent;
           outline: none;
-          color: var(--color-brand-lime-dark);
+          color: var(--color-brand-text-primary);
           font-family: 'Quicksand', sans-serif;
           font-weight: 700;
           text-align: center;
           transition: all 0.3s ease;
           padding-bottom: 2px;
+          max-width: 100%; /* Prevents breaking on small mobiles */
+        }
+        @media (min-width: 768px) {
+          .inline-input {
+            border-bottom: 4px dashed var(--color-brand-dark);
+          }
         }
 
+        /* On focus, input border and text changes to Forest Green (Lime Dark) */
         .inline-input:focus {
-          border-bottom: 4px solid var(--color-brand-lime-dark);
-          color: var(--color-brand-dark);
+          border-bottom: 3px solid var(--color-brand-lime-dark);
+          color: var(--color-brand-lime-dark);
+        }
+        @media (min-width: 768px) {
+          .inline-input:focus {
+            border-bottom: 4px solid var(--color-brand-lime-dark);
+          }
         }
 
         .inline-input::placeholder {
-          /* Using hex with opacity for Brand Dark (#2B2601) */
-          color: #2B26014D; 
+          /* Using hex with opacity for Brand Dark (#1A5415 at 40%) */
+          color: #1A541566; 
           font-weight: 600;
         }
 
-        /* Clean dropdown arrows with Brand Dark color encoded (%232B2601) */
+        /* Clean dropdown arrows with Brand Dark color encoded (#1A5415) */
         select.inline-input {
           -webkit-appearance: none;
           -moz-appearance: none;
-          background-image: url("data:image/svg+xml;utf8,<svg fill='%232B2601' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+          background-image: url("data:image/svg+xml;utf8,<svg fill='%231A5415' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
           background-repeat: no-repeat;
           background-position-x: 100%;
           background-position-y: 50%;
           padding-right: 1.5rem;
+          text-overflow: ellipsis;
         }
       `}</style>
     </section>

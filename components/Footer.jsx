@@ -14,7 +14,7 @@ export default function Footer() {
   const [modalType, setModalType] = useState(null); 
 
   return (
-    <footer className="bg-brand-dark text-brand-cream pt-32 pb-16 px-6 relative mt-12 z-40 overflow-hidden">
+    <footer className="bg-brand-dark text-brand-cream pt-32 pb-16 px-6 relative mt-0 z-0 overflow-hidden">
       <div className="absolute bottom-0 left-0 w-full h-[200px] md:h-[300px] z-0 opacity-20 pointer-events-none">
         <div className="absolute bottom-0 left-0 w-[200%] h-full flex animate-wave-1">
           <WaveSVG className="w-1/2 h-full text-brand-accent fill-current" />

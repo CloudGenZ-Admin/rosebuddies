@@ -14,22 +14,22 @@ import Footer from "../components/Footer";
 
 export default function Home() {
   return (
-    <main>
+    <main className=" ">
       <Navbar />
       
       <Hero />
       <SocialProof />
       
-      <Problem /> 
-      <NoAlgorithm />
+      {/* <Problem />  */}
+      {/* <NoAlgorithm /> */}
       
       <HowItWorks />
       
-      <Experiences /> 
+      {/* <Experiences />  */}
       <CuratedExperiences />
       <CommunityStandards />
       
-      <Pricing />
+      {/* <Pricing /> */}
       <WaitlistForm /> 
       <FAQ />
      
