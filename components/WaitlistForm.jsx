@@ -12,6 +12,10 @@ const WaveSVG = ({ className }) => (
 export default function WaitlistForm() {
   const [status, setStatus] = useState('idle'); // idle, loading, success
   const [focusedInput, setFocusedInput] = useState(null);
+  
+  // Added state to track input lengths for dynamic width calculation
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -80,7 +84,11 @@ export default function WaitlistForm() {
                   type="text" 
                   required 
                   placeholder="[ Your Name ]" 
-                  className="inline-input w-[140px] sm:w-48" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="inline-input"
+                  // Dynamically adjusts width based on character count to prevent cut off
+                  style={{ width: `${Math.max(14, name.length + 3)}ch`, maxWidth: '100%' }}
                   onFocus={() => setFocusedInput('name')}
                   onBlur={() => setFocusedInput(null)}
                 /> 
@@ -91,7 +99,11 @@ export default function WaitlistForm() {
                   type="email" 
                   required 
                   placeholder="[ Your Email ]" 
-                  className="inline-input w-[180px] sm:w-72" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="inline-input"
+                  // Dynamically adjusts width based on character count to prevent cut off
+                  style={{ width: `${Math.max(16, email.length + 3)}ch`, maxWidth: '100%' }}
                   onFocus={() => setFocusedInput('email')}
                   onBlur={() => setFocusedInput(null)}
                 />
@@ -220,9 +232,10 @@ export default function WaitlistForm() {
           font-family: 'Quicksand', sans-serif;
           font-weight: 700;
           text-align: center;
-          transition: all 0.3s ease;
+          transition: border-color 0.3s ease, color 0.3s ease;
           padding-bottom: 2px;
           max-width: 100%; /* Prevents breaking on small mobiles */
+          field-sizing: content; /* Native auto-expanding input for modern browsers */
         }
         @media (min-width: 768px) {
           .inline-input {
