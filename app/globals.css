@@ -30,8 +30,6 @@
   --color-brand-lemon-dark: #C9BE65;  
 
 
-     
-  /* Standard body text: Deep Mint Green (kaala nahi lagega, fresh lagega) */
   --color-brand-text: var(--color-brand-dark); 
   
   /* Muted text: Darkened olive shadow */
