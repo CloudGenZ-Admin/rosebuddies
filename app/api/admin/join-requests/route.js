@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { JoinRequest } from "../../../../lib/models/joinRequest.js";
 import { verifyAdmin } from "../../../../lib/middleware/auth.js";
-import { connectDB } from "../../../../lib/db.js";
 
 export async function GET(request) {
   try {
@@ -10,9 +9,6 @@ export async function GET(request) {
     if (error) {
       return error; // Returns the 401 response from the middleware
     }
-
-    // 2. Ensure DB is connected
-    await connectDB();
 
     // 3. Fetch all requests, ordered by newest first
     const requests = await JoinRequest.findAll({

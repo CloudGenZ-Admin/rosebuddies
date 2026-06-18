@@ -3,7 +3,10 @@ import mysql from "mysql2/promise";
 import bcrypt from "bcryptjs";
 import { sequelize } from "../lib/db.js";
 import { Admin } from "../lib/models/admin.js";
-import { JoinRequest } from "../lib/models/joinRequest.js"; // Import so it syncs
+import { JoinRequest } from "../lib/models/joinRequest.js";
+import { User } from "../lib/models/user.js"; // Import so it syncs
+import { MeetPerson } from "../lib/models/meetPerson.js";
+import { FooterSubscriber } from "../lib/models/footerSubscriber.js";
 
 async function initDB() {
   try {

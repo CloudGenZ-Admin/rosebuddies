@@ -3,13 +3,9 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Admin } from "../../../../lib/models/admin.js";
 import { adminLoginSchema } from "../../../../lib/validations/adminAuth.js";
-import { connectDB } from "../../../../lib/db.js";
 
 export async function POST(request) {
   try {
-    // Ensure DB is connected
-    await connectDB();
-
     let body;
     try {
       body = await request.json();

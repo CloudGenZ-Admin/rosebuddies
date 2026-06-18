@@ -11,6 +11,8 @@
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.4.2",
+    "firebase": "^12.15.0",
+    "firebase-admin": "^14.0.0",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^1.17.0",
     "mysql2": "^3.22.5",

@@ -1,12 +1,9 @@
 import { NextResponse } from "next/server";
 import { JoinRequest } from "../../../lib/models/joinRequest.js";
 import { joinMovementSchema } from "../../../lib/validations/forms.js";
-import { connectDB } from "../../../lib/db.js";
 
 export async function POST(request) {
   try {
-    await connectDB();
-    
     let body;
     try {
       body = await request.json();
