@@ -7,6 +7,8 @@ import { JoinRequest } from "../lib/models/joinRequest.js";
 import { User } from "../lib/models/user.js"; // Import so it syncs
 import { MeetPerson } from "../lib/models/meetPerson.js";
 import { FooterSubscriber } from "../lib/models/footerSubscriber.js";
+import { VibeCheck } from "../lib/models/vibeCheck.js";
+import { GetStartedMeet } from "../lib/models/getStartedMeet.js";
 
 async function initDB() {
   try {
