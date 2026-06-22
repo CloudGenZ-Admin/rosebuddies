@@ -51,10 +51,13 @@ export default function Navbar() {
           </div>
 
           {/* Actions (Desktop) */}
-          <div className="hidden lg:flex items-center gap-3 xl:gap-4">
-            {/* <Link href="/login" className="lg:px-4 lg:py-2 xl:px-6 xl:py-2.5 bg-brand-cream text-brand-dark font-bold font-sans rounded-full border-2 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#1A5415] transition-all whitespace-nowrap cursor-pointer lg:text-sm xl:text-base">
+          <div className="hidden lg:flex items-center gap-2 xl:gap-4">
+            <Link href="/login" className="lg:px-4 lg:py-2 xl:px-6 xl:py-2.5 bg-brand-light text-brand-dark font-bold font-sans rounded-full border-2 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#1A5415] transition-all whitespace-nowrap cursor-pointer lg:text-sm xl:text-base">
               Login
-            </Link> */}
+            </Link>
+            <Link href="/signup" className="lg:px-4 lg:py-2 xl:px-6 xl:py-2.5 bg-brand-cream text-brand-dark font-bold font-sans rounded-full border-2 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#1A5415] transition-all whitespace-nowrap cursor-pointer lg:text-sm xl:text-base">
+              Sign Up
+            </Link>
             <button 
               onClick={() => setIsWaitlistOpen(true)} 
               className="flex items-center gap-2 lg:px-4 lg:py-2 xl:px-6 xl:py-2.5 bg-brand-primary text-brand-dark font-bold font-sans rounded-full border-2 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#9FD62A] transition-all whitespace-nowrap cursor-pointer lg:text-sm xl:text-base"
@@ -94,12 +97,28 @@ export default function Navbar() {
           </div>
           
           <div className="flex flex-col gap-3 sm:gap-4 mt-2 sm:mt-4 pt-5 sm:pt-6 border-t-4 border-brand-dark border-dashed">
-            {/* <Link href="/login" onClick={() => setIsOpen(false)} className="text-center text-lg sm:text-xl md:text-2xl px-6 py-3.5 sm:py-4 bg-brand-cream text-brand-dark border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl active:translate-y-1 active:shadow-[2px_2px_0px_#1A5415] sm:active:shadow-[4px_4px_0px_#1A5415] transition-all cursor-pointer">
-              Login
-            </Link> */}
+            
+            {/* Login and Sign Up side-by-side on mobile to save space */}
+            <div className="flex gap-3 sm:gap-4">
+              <Link 
+                href="/login" 
+                onClick={() => setIsOpen(false)} 
+                className="flex-1 text-center text-lg sm:text-xl md:text-2xl px-4 py-3.5 sm:py-4 bg-brand-light text-brand-dark border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl active:translate-y-1 active:shadow-[2px_2px_0px_#1A5415] sm:active:shadow-[4px_4px_0px_#1A5415] transition-all cursor-pointer"
+              >
+                Login
+              </Link>
+              <Link 
+                href="/signup" 
+                onClick={() => setIsOpen(false)} 
+                className="flex-1 text-center text-lg sm:text-xl md:text-2xl px-4 py-3.5 sm:py-4 bg-brand-cream text-brand-dark border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl active:translate-y-1 active:shadow-[2px_2px_0px_#1A5415] sm:active:shadow-[4px_4px_0px_#1A5415] transition-all cursor-pointer"
+              >
+                Sign Up
+              </Link>
+            </div>
+            
             <button 
               onClick={() => { setIsOpen(false); setIsWaitlistOpen(true); }} 
-              className="text-center text-lg sm:text-xl md:text-2xl px-6 py-3.5 sm:py-4 bg-brand-primary text-brand-dark border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl active:translate-y-1 active:shadow-[2px_2px_0px_#1A5415] sm:active:shadow-[4px_4px_0px_#1A5415] transition-all flex justify-center items-center gap-2 cursor-pointer"
+              className="w-full text-center text-lg sm:text-xl md:text-2xl px-6 py-3.5 sm:py-4 bg-brand-primary text-brand-dark border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl active:translate-y-1 active:shadow-[2px_2px_0px_#1A5415] sm:active:shadow-[4px_4px_0px_#1A5415] transition-all flex justify-center items-center gap-2 cursor-pointer"
             >
               Join The Movement
             </button>
