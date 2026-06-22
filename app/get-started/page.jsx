@@ -444,7 +444,7 @@ function WaitlistForm({ vibeCheckId }) {
     };
 
     try {
-      const response = await fetch('/api/meet', {
+      const response = await fetch('/api/get-started-meet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(apiPayload),

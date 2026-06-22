@@ -25,7 +25,7 @@ export default function FinalCTA() {
 
     try {
       // POST to the updated public route
-      const response = await fetch('/api/get-started-meet', {
+      const response = await fetch('/api/meet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

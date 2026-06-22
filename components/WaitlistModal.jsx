@@ -75,7 +75,7 @@ export default function WaitlistModal({ isOpen, onClose }) {
     try {
       const email = e.target.email.value;
 
-      const response = await fetch('/api/admin/join-requests', {
+      const response = await fetch('/api/join', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

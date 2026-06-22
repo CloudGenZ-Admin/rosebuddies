@@ -15,11 +15,38 @@ export default function WaitlistForm() {
   
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [location, setLocation] = useState('');
+  const [energy, setEnergy] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
-    setTimeout(() => setStatus('success'), 2000);
+    
+    const apiPayload = {
+      username: name,
+      email: email,
+      city: location,
+      vibe: energy
+    };
+
+    try {
+      const response = await fetch('/api/meet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(apiPayload),
+      });
+
+      if (response.ok) {
+        setStatus('success');
+      } else {
+        const errorData = await response.json();
+        console.error("Submission failed validation:", errorData);
+        setStatus('idle');
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setStatus('idle');
+    }
   };
 
   return (
@@ -110,7 +137,8 @@ export default function WaitlistForm() {
                   className="inline-select cursor-pointer"
                   onFocus={() => setFocusedInput('location')}
                   onBlur={() => setFocusedInput(null)}
-                  defaultValue=""
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
                   required
                 >
                   <option  value="" disabled>[ Select Area ]</option>
@@ -131,7 +159,8 @@ export default function WaitlistForm() {
                   className="inline-select cursor-pointer"
                   onFocus={() => setFocusedInput('energy')}
                   onBlur={() => setFocusedInput(null)}
-                  defaultValue=""
+                  value={energy}
+                  onChange={(e) => setEnergy(e.target.value)}
                   required
                 >
                   <option value="" disabled>[ Select Vibe ]</option>
