@@ -12,6 +12,45 @@ const WaveSVG = ({ className }) => (
 
 export default function Footer() {
   const [modalType, setModalType] = useState(null); 
+  
+  // Form integration states
+  const [formData, setFormData] = useState({ username: '', email: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setStatusMessage({ type: '', text: '' });
+
+    try {
+      // Integrated with the newly provided /api/footer-subscribe backend route
+      const response = await fetch('/api/footer-subscribe', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
+
+      setStatusMessage({ type: 'success', text: 'Success! We got your message.' });
+      setFormData({ username: '', email: '', message: '' }); // Clear form
+    } catch (error) {
+      console.error('Submission error:', error);
+      setStatusMessage({ type: 'error', text: 'Something went wrong. Please try again.' });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <footer className="bg-brand-dark text-brand-cream pt-24 lg:pt-32 pb-12 px-6 relative mt-0 z-0 overflow-hidden">
@@ -38,27 +77,50 @@ export default function Footer() {
             {/* Using brand-text-primary for good contrast against cream */}
             <p className="text-brand-text-primary text-lg mb-8 font-bold">We're real people. Drop us a note.</p>
             
-            <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+            <form className="space-y-5" onSubmit={handleSubmit}>
               <input 
                 type="text" 
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
+                required
                 placeholder="Your Name" 
                 className="w-full bg-white border-2 border-brand-dark rounded-xl px-4 py-4 text-brand-dark placeholder:text-brand-dark/50 outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/30 font-bold font-sans transition-all shadow-sm" 
               />
               <input 
                 type="email" 
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
                 placeholder="Your Email" 
                 className="w-full bg-white border-2 border-brand-dark rounded-xl px-4 py-4 text-brand-dark placeholder:text-brand-dark/50 outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/30 font-bold font-sans transition-all shadow-sm" 
               />
               <textarea 
+                name="message"
+                value={formData.message}
+                onChange={handleInputChange}
+                required
                 placeholder="How can we help?" 
                 rows="4" 
                 className="w-full bg-white border-2 border-brand-dark rounded-xl px-4 py-4 text-brand-dark placeholder:text-brand-dark/50 outline-none focus:border-brand-primary focus:ring-4 focus:ring-brand-primary/30 font-bold font-sans transition-all resize-none shadow-sm"
               ></textarea>
               
-              <button className="group w-full flex items-center justify-center gap-3 bg-brand-dark text-brand-cream font-black text-xl px-6 py-4 rounded-xl border-4 border-brand-dark hover:bg-brand-primary hover:text-brand-dark hover:shadow-[6px_6px_0px_var(--color-brand-accent)] transition-all shadow-[4px_4px_0px_var(--color-brand-dark)]">
-                Send Message
+              <button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="group w-full flex items-center justify-center gap-3 bg-brand-dark text-brand-cream font-black text-xl px-6 py-4 rounded-xl border-4 border-brand-dark hover:bg-brand-primary hover:text-brand-dark hover:shadow-[6px_6px_0px_var(--color-brand-accent)] transition-all shadow-[4px_4px_0px_var(--color-brand-dark)] disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isSubmitting ? 'Sending...' : 'Send Message'}
                 <Send size={22} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </button>
+              
+              {/* Status Message Display */}
+              {statusMessage.text && (
+                <p className={`text-center font-bold text-sm mt-2 ${statusMessage.type === 'success' ? 'text-green-600' : 'text-red-500'}`}>
+                  {statusMessage.text}
+                </p>
+              )}
             </form>
           </div>
         </div>

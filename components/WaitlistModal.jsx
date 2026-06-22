@@ -25,7 +25,8 @@ const OTTAWA_AREAS = [
 ];
 
 export default function WaitlistModal({ isOpen, onClose }) {
-  const [waitlistStatus, setWaitlistStatus] = useState("idle"); // idle, submitting, success
+  const [waitlistStatus, setWaitlistStatus] = useState("idle"); // idle, submitting, success, error
+  const [errorMessage, setErrorMessage] = useState("");
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedArea, setSelectedArea] = useState("");
   const dropdownRef = useRef(null);
@@ -37,7 +38,10 @@ export default function WaitlistModal({ isOpen, onClose }) {
     } else {
       document.body.style.overflow = "unset";
       // Reset state when closed
-      setTimeout(() => setWaitlistStatus("idle"), 300);
+      setTimeout(() => {
+        setWaitlistStatus("idle");
+        setErrorMessage("");
+      }, 300);
       setSelectedArea("");
       setIsDropdownOpen(false);
     }
@@ -56,16 +60,53 @@ export default function WaitlistModal({ isOpen, onClose }) {
   }, []);
 
   // Handle Waitlist Form Submission
-  const handleWaitlistSubmit = (e) => {
+  const handleWaitlistSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
+
+    // Custom validation for dropdown to prevent hidden input focus errors
     if (!selectedArea) {
       setIsDropdownOpen(true);
       return;
     }
+
     setWaitlistStatus("submitting");
-    setTimeout(() => {
-      setWaitlistStatus("success");
-    }, 1500);
+
+    try {
+      const email = e.target.email.value;
+
+      const response = await fetch('/api/admin/join-requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          city: selectedArea, 
+        }),
+      });
+
+      // Safely check if response is JSON to prevent <!DOCTYPE html> crashes on 404s
+      const contentType = response.headers.get("content-type");
+      let data = {};
+      
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json();
+      } else {
+        throw new Error("Server returned an invalid response (Endpoint might be missing).");
+      }
+
+      if (response.ok) {
+        setWaitlistStatus("success");
+      } else {
+        setErrorMessage(data.error || "Failed to join the waitlist. Please try again.");
+        setWaitlistStatus("error");
+      }
+    } catch (error) {
+      console.error("Waitlist Submission Error:", error);
+      setErrorMessage("System error. Please make sure the API endpoint exists and try again.");
+      setWaitlistStatus("error");
+    }
   };
 
   if (!isOpen) return null;
@@ -82,7 +123,7 @@ export default function WaitlistModal({ isOpen, onClose }) {
             onClick={onClose}
           ></div>
 
-          {/* Modal Container: Inline block allows centering, no hidden overflow so dropdown pops out perfectly */}
+          {/* Modal Container */}
           <div className="relative inline-block w-full max-w-[95%] sm:max-w-md md:max-w-lg lg:max-w-xl text-left align-middle bg-brand-cream border-4 border-brand-dark rounded-[20px] sm:rounded-[24px] shadow-[6px_6px_0px_#1A5415] sm:shadow-[8px_8px_0px_#1A5415] z-10 my-8 animate-in zoom-in-95 duration-200">
             
             {/* Close Button */}
@@ -116,7 +157,7 @@ export default function WaitlistModal({ isOpen, onClose }) {
                 /* Form State */
                 <>
                   <div className="mb-5 sm:mb-6 md:mb-8 pr-6 sm:pr-8">
-                    <div className="inline-block bg-brand-primary px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 rounded-md border-2 border-brand-dark font-black text-[10px] sm:text-xs md:text-sm uppercase tracking-wide mb-3 sm:mb-4 md:mb-5 -rotate-2">
+                    <div className="inline-block bg-brand-primary px-2.5 sm:px-3 md:px-4 py-1 sm:py-1.5 rounded-md border-2 border-brand-dark font-black text-[10px] sm:text-xs md:text-sm uppercase tracking-wide mb-3 sm:mb-4 md:mb-5 -rotate-2 shadow-[2px_2px_0px_#1A5415]">
                       Log Off. Show Up. Belong.
                     </div>
                     <h3 className="text-2xl sm:text-3xl md:text-4xl font-black font-serif text-brand-dark mb-2 sm:mb-3 md:mb-4 leading-tight">
@@ -126,6 +167,13 @@ export default function WaitlistModal({ isOpen, onClose }) {
                       We're bringing real connection back to Ottawa. Tell us your neighborhood!
                     </p>
                   </div>
+
+                  {/* Dynamic Error State matching brutalist theme */}
+                  {errorMessage && (
+                    <div className="mb-5 p-3.5 bg-red-100 border-4 border-brand-dark rounded-xl font-bold text-red-600 shadow-[4px_4px_0px_#1A5415] text-sm md:text-base animate-in slide-in-from-top-2">
+                      {errorMessage}
+                    </div>
+                  )}
 
                   <form onSubmit={handleWaitlistSubmit} className="space-y-4 sm:space-y-5 md:space-y-6 pb-2 w-full">
                     {/* Email Field */}
@@ -145,41 +193,18 @@ export default function WaitlistModal({ isOpen, onClose }) {
                       </div>
                     </div>
 
-                    {/* Perfect Custom Dropdown */}
+                    {/* Pop-Upward Custom Dropdown (Floats over email input to stay inside modal) */}
                     <div className="space-y-1.5 sm:space-y-2 relative" ref={dropdownRef}>
                       <label className="block font-black text-brand-dark text-xs sm:text-sm md:text-base uppercase tracking-wide">
                         Your Ottawa Area
                       </label>
                       <div className="relative">
-                        {/* Hidden required input for native form validation */}
-                        <input type="text" required value={selectedArea} className="absolute opacity-0 w-0 h-0 pointer-events-none" readOnly />
+                        {/* Hidden input - Removed native HTML 'required' to prevent browser focus crashes on hidden inputs, validation is manual */}
+                        <input type="text" value={selectedArea} className="absolute opacity-0 w-0 h-0 pointer-events-none" readOnly />
 
-                        {/* Dropdown Toggle Button */}
-                        <button
-                          type="button"
-                          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                          className={`w-full relative z-20 cursor-pointer flex items-center justify-between pl-10 sm:pl-12 md:pl-14 pr-4 py-3 sm:py-3.5 md:py-4 border-4 border-brand-dark font-bold text-base sm:text-lg md:text-xl transition-all ${
-                            isDropdownOpen 
-                              ? "bg-white rounded-t-xl md:rounded-t-2xl border-b-0 shadow-none translate-y-[2px]" 
-                              : "bg-brand-light rounded-xl md:rounded-2xl shadow-[4px_4px_0px_#1A5415] md:shadow-[6px_6px_0px_#1A5415] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_#1A5415] md:hover:shadow-[8px_8px_0px_#1A5415]"
-                          } ${selectedArea ? "text-brand-dark" : "text-brand-dark/50"}`}
-                        >
-                          <MapPin className={`absolute left-3.5 sm:left-4 md:left-5 top-1/2 -translate-y-1/2 transition-colors md:w-6 md:h-6 ${isDropdownOpen || selectedArea ? "text-brand-dark" : "text-brand-dark/50"}`} size={20} strokeWidth={2.5} />
-                          
-                          <span className="truncate pr-2 text-left w-full">
-                            {selectedArea ? OTTAWA_AREAS.find(a => a.id === selectedArea)?.label : "Select neighborhood..."}
-                          </span>
-                          
-                          <ChevronDown 
-                            className={`transition-transform duration-300 text-brand-dark shrink-0 md:w-6 md:h-6 ${isDropdownOpen ? "rotate-180" : ""}`} 
-                            size={20} 
-                            strokeWidth={3} 
-                          />
-                        </button>
-
-                        {/* Dropdown Options List - Overflowing beautifully over the form constraints */}
+                        {/* Dropdown Options List (Pops UPWARDS over the email field) */}
                         {isDropdownOpen && (
-                          <div className="absolute z-[70] left-0 right-0 top-[calc(100%-2px)] bg-white border-4 border-brand-dark rounded-b-xl md:rounded-b-2xl border-t-0 shadow-[4px_4px_0px_#1A5415] md:shadow-[6px_6px_0px_#1A5415] max-h-[220px] sm:max-h-[260px] overflow-y-auto custom-scrollbar animate-in slide-in-from-top-1 duration-200">
+                          <div className="absolute z-[70] left-0 right-0 bottom-[calc(100%-4px)] bg-white border-4 border-brand-dark rounded-t-xl md:rounded-t-2xl border-b-0 shadow-[4px_0px_0px_#1A5415] md:shadow-[6px_0px_0px_#1A5415] max-h-[180px] sm:max-h-[220px] overflow-y-auto custom-scrollbar animate-in slide-in-from-bottom-2 duration-200">
                             <ul className="flex flex-col">
                               {OTTAWA_AREAS.map((area) => (
                                 <li key={area.id}>
@@ -188,6 +213,7 @@ export default function WaitlistModal({ isOpen, onClose }) {
                                     onClick={() => {
                                       setSelectedArea(area.id);
                                       setIsDropdownOpen(false);
+                                      setErrorMessage(""); // clear errors upon selecting area
                                     }}
                                     className={`w-full cursor-pointer flex items-center justify-between px-4 sm:px-5 md:px-6 py-3 sm:py-3.5 md:py-4 transition-all duration-200 focus:outline-none text-left font-bold text-sm sm:text-base md:text-lg border-b-2 border-brand-dark/10 last:border-b-0
                                       ${selectedArea === area.id 
@@ -205,6 +231,29 @@ export default function WaitlistModal({ isOpen, onClose }) {
                             </ul>
                           </div>
                         )}
+
+                        {/* Dropdown Toggle Button */}
+                        <button
+                          type="button"
+                          onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                          className={`w-full relative z-20 cursor-pointer flex items-center justify-between pl-10 sm:pl-12 md:pl-14 pr-4 py-3 sm:py-3.5 md:py-4 border-4 border-brand-dark font-bold text-base sm:text-lg md:text-xl transition-all ${
+                            isDropdownOpen 
+                              ? "bg-white rounded-b-xl md:rounded-b-2xl border-t-transparent shadow-[4px_4px_0px_#1A5415] md:shadow-[6px_6px_0px_#1A5415]" 
+                              : "bg-brand-light rounded-xl md:rounded-2xl shadow-[4px_4px_0px_#1A5415] md:shadow-[6px_6px_0px_#1A5415] hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_#1A5415] md:hover:shadow-[8px_8px_0px_#1A5415]"
+                          } ${selectedArea ? "text-brand-dark" : "text-brand-dark/50"}`}
+                        >
+                          <MapPin className={`absolute left-3.5 sm:left-4 md:left-5 top-1/2 -translate-y-1/2 transition-colors md:w-6 md:h-6 ${isDropdownOpen || selectedArea ? "text-brand-dark" : "text-brand-dark/50"}`} size={20} strokeWidth={2.5} />
+                          
+                          <span className="truncate pr-2 text-left w-full">
+                            {selectedArea ? OTTAWA_AREAS.find(a => a.id === selectedArea)?.label : "Select neighborhood..."}
+                          </span>
+                          
+                          <ChevronDown 
+                            className={`transition-transform duration-300 text-brand-dark shrink-0 md:w-6 md:h-6 ${isDropdownOpen ? "rotate-180" : ""}`} 
+                            size={20} 
+                            strokeWidth={3} 
+                          />
+                        </button>
                       </div>
                     </div>
 

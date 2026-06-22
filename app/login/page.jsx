@@ -1,6 +1,7 @@
 "use client";
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Sparkles, Heart, Zap } from 'lucide-react';
 
 // Import your Navbar and Footer (Adjust path as necessary based on your project structure)
@@ -8,18 +9,49 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // Handle Form Submission (Mock)
-  const handleSubmit = (e) => {
+  // Handle Form Submission integrated with backend
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    setTimeout(() => {
+    setErrorMessage(""); // Clear previous errors
+
+    // Get values directly from the form event using the input IDs
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+
+    try {
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Success: Store the JWT token & user data in localStorage
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        // Redirect to protected page (e.g., dashboard or homepage)
+        router.push('/'); 
+      } else {
+        // Handle API errors (e.g. wrong password, missing fields)
+        setErrorMessage(data.error || "Invalid login credentials. Please try again.");
+        setIsSubmitting(false);
+      }
+    } catch (error) {
+      console.error("Login Error:", error);
+      setErrorMessage("Network error. Please try again later.");
       setIsSubmitting(false);
-      // alert("Logged in successfully!"); // Replace with real routing
-    }, 1500);
+    }
   };
 
   return (
@@ -55,9 +87,16 @@ export default function LoginPage() {
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black font-serif text-brand-dark mb-3 leading-tight">
                 Log in to your account.
               </h1>
-              <p className="text-base sm:text-lg font-bold font-sans text-brand-dark/80 mb-8">
+              <p className="text-base sm:text-lg font-bold font-sans text-brand-dark/80 mb-6">
                 Ready to log off and show up?
               </p>
+
+              {/* Error Message Box (styled to match your brutalist theme) */}
+              {errorMessage && (
+                <div className="mb-6 p-4 bg-red-100 border-4 border-brand-dark rounded-xl font-bold text-red-600 shadow-[4px_4px_0px_#1A5415] animate-in slide-in-from-top-2 duration-300">
+                  {errorMessage}
+                </div>
+              )}
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">

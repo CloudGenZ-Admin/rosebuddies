@@ -18,6 +18,8 @@ async function initDB() {
     const database = process.env.DB_NAME || "rosebuddies";
     const port = process.env.DB_PORT || 3306;
 
+    
+
     console.log(`Connecting to MySQL server at ${host}:${port}...`);
     // Create connection without database to create it if it doesn't exist
     const connection = await mysql.createConnection({

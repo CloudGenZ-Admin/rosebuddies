@@ -20,7 +20,7 @@ export async function POST(request) {
 
     return NextResponse.json({ message: "Successfully subscribed!", data: newSubscriber }, { status: 201 });
   } catch (error) {
-    console.error("Footer Subscribe API Error:", error);
+    console.error("Footer Subscribe API Errozr:", error);
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
