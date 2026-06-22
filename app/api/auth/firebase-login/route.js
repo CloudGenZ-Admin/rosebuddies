@@ -12,7 +12,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "Invalid or missing JSON body" }, { status: 400 });
     }
 
-    const { firebaseToken } = body;
+    const { firebaseToken, firstName: bodyFirstName, lastName: bodyLastName } = body;
 
     if (!firebaseToken) {
       return NextResponse.json({ error: "Firebase token is required" }, { status: 400 });
@@ -41,11 +41,47 @@ export async function POST(request) {
 
     // 4. If completely new, create the user in MySQL
     if (!user) {
+      let finalFirstName = null;
+      let finalLastName = null;
+      
+      // 1. First priority: Use the 'name' (displayName) from the Google Token
+      if (name) {
+        const nameParts = name.split(" ");
+        finalFirstName = nameParts[0];
+        finalLastName = nameParts.slice(1).join(" ") || null;
+      } 
+      // 2. Second fallback: Use explicit firstName/lastName from frontend body
+      else if (bodyFirstName) {
+        finalFirstName = bodyFirstName;
+        finalLastName = bodyLastName || null;
+      }
+      // 3. Third fallback: Both are null (handled by default)
+
       user = await User.create({
+        firstName: finalFirstName,
+        lastName: finalLastName,
         email,
         firebaseUid: uid,
         // passwordHash remains null since they are using Firebase
       });
+    } else {
+      // If user already exists but their names are null (e.g. created during testing before we added names), update them!
+      if (!user.firstName && !user.lastName) {
+        let updateFirstName = bodyFirstName;
+        let updateLastName = bodyLastName;
+        
+        if (!updateFirstName && name) {
+          const nameParts = name.split(" ");
+          updateFirstName = nameParts[0];
+          updateLastName = nameParts.slice(1).join(" ") || null;
+        }
+
+        if (updateFirstName || updateLastName) {
+          user.firstName = updateFirstName || user.firstName;
+          user.lastName = updateLastName || user.lastName;
+          await user.save();
+        }
+      }
     }
 
     // 5. Generate our own local JWT to keep standard auth flow consistent across the app
@@ -62,7 +98,9 @@ export async function POST(request) {
       user: {
         id: user.id,
         email: user.email,
-        displayName: name || null,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        profileCompleted: user.profileCompleted,
         photoUrl: picture || null
       }
     }, { status: 200 });

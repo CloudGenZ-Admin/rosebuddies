@@ -5,6 +5,7 @@ import { sequelize } from "../lib/db.js";
 import { Admin } from "../lib/models/admin.js";
 import { JoinRequest } from "../lib/models/joinRequest.js";
 import { User } from "../lib/models/user.js"; // Import so it syncs
+import { UserProfile } from "../lib/models/userProfile.js";
 import { MeetPerson } from "../lib/models/meetPerson.js";
 import { FooterSubscriber } from "../lib/models/footerSubscriber.js";
 import { VibeCheck } from "../lib/models/vibeCheck.js";

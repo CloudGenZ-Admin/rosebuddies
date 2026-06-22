@@ -28,9 +28,12 @@ export async function POST(request) {
 
     // Check if user has a password (they might have only signed up via Firebase)
     if (!user.passwordHash) {
-      return NextResponse.json({ 
-        error: "This account was created using Google Sign-In. Please use Google to log in." 
-      }, { status: 401 });
+      if (user.firebaseUid) {
+        return NextResponse.json({ 
+          error: "This account was created using Google Sign-In. Please use Google to log in." 
+        }, { status: 401 });
+      }
+      return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
     }
 
     // Verify password
@@ -50,7 +53,13 @@ export async function POST(request) {
     return NextResponse.json({
       message: "Login successful",
       token,
-      user: { id: user.id, email: user.email }
+      user: { 
+        id: user.id, 
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        profileCompleted: user.profileCompleted 
+      }
     }, { status: 200 });
 
   } catch (error) {

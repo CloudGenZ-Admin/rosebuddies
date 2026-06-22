@@ -18,7 +18,7 @@ export async function POST(request) {
       return NextResponse.json({ errors: validationResult.error.format() }, { status: 400 });
     }
 
-    const { email, password } = validationResult.data;
+    const { firstName, lastName, email, password } = validationResult.data;
 
     // Check if user exists
     const existingUser = await User.findOne({ where: { email } });
@@ -32,22 +32,21 @@ export async function POST(request) {
 
     // Create user
     const newUser = await User.create({
+      firstName,
+      lastName,
       email,
       passwordHash,
     });
 
-    // Generate JWT
-    const secret = process.env.JWT_SECRET || "super_secret_jwt_key_please_change_in_production";
-    const token = jwt.sign(
-      { id: newUser.id, email: newUser.email, role: "user" },
-      secret,
-      { expiresIn: "7d" }
-    );
-
     return NextResponse.json({
-      message: "Signup successful",
-      token,
-      user: { id: newUser.id, email: newUser.email }
+      message: "Signup successful. Please log in.",
+      user: { 
+        id: newUser.id, 
+        email: newUser.email, 
+        firstName: newUser.firstName, 
+        lastName: newUser.lastName,
+        profileCompleted: newUser.profileCompleted 
+      }
     }, { status: 201 });
 
   } catch (error) {
