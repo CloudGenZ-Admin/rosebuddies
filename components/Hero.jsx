@@ -106,14 +106,14 @@ export default function Hero() {
               </svg>
             </div>
 
-            {/* Primary Button */}
-            <a href="#interest" className="w-full sm:w-auto flex items-center justify-center gap-3 bg-brand-dark text-brand-cream font-bold text-lg px-8 py-4 rounded-full shadow-[6px_6px_0px] shadow-brand-secondary hover:shadow-[8px_8px_0px] hover:shadow-brand-accent hover:-translate-y-1 hover:bg-brand-lime-dark hover:text-brand-cream transition-all duration-300 group">
+            {/* Primary Button - Changed to #waitlist */}
+            <a href="#waitlist" className="w-full sm:w-auto flex items-center justify-center gap-3 bg-brand-dark text-brand-cream font-bold text-lg px-8 py-4 rounded-full shadow-[6px_6px_0px] shadow-brand-secondary hover:shadow-[8px_8px_0px] hover:shadow-brand-accent hover:-translate-y-1 hover:bg-brand-lime-dark hover:text-brand-cream transition-all duration-300 group">
                Find My Circle 
               <ArrowRight className="group-hover:translate-x-1 transition-transform" size={20} />
             </a>
             
-            {/* Secondary Button */}
-            <a href="#meet" className="w-full sm:w-auto text-center px-8 py-4 border-4 border-brand-dark rounded-full font-bold text-brand-on-primary bg-brand-primary shadow-[4px_4px_0px_var(--color-brand-dark)] hover:translate-y-1 hover:shadow-none hover:bg-brand-dark hover:text-brand-cream transition-all duration-300">
+            {/* Secondary Button - Changed to #waitlist */}
+            <a href="#waitlist" className="w-full sm:w-auto text-center px-8 py-4 border-4 border-brand-dark rounded-full font-bold text-brand-on-primary bg-brand-primary shadow-[4px_4px_0px_var(--color-brand-dark)] hover:translate-y-1 hover:shadow-none hover:bg-brand-dark hover:text-brand-cream transition-all duration-300">
                Join the Next Meet & Greet – $25 
             </a>
           </div>

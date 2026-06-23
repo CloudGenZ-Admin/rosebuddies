@@ -119,26 +119,7 @@ export default function AboutPage() {
       </section>
 
       {/* --- OUTRO CTA --- */}
-      <section className="py-20 md:py-32 relative z-20 text-center px-5 bg-brand-dark border-t-8 border-brand-lime-dark">
-        <div className="max-w-4xl mx-auto flex flex-col items-center">
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-black font-serif text-brand-cream mb-8 leading-tight">
-            Log Off.<br/>
-            Show Up.<br/>
-            <span className="text-brand-primary">Belong.</span>
-          </h2>
-          
-          <p className="text-xl md:text-2xl font-medium font-sans text-brand-light/80 mb-10 max-w-2xl">
-            In a world designed to keep us scrolling, Rosebuddies helps people start living again. Your people are closer than you think.
-          </p>
-          
-          <button 
-            onClick={() => document.querySelector('nav button').click()} // Quick hack to open waitlist from navbar
-            className="group flex items-center justify-center gap-3 px-8 py-4 bg-brand-primary text-brand-dark font-black text-xl md:text-2xl rounded-full border-4 border-brand-dark shadow-[6px_6px_0px_#9FD62A] hover:-translate-y-2 hover:shadow-[8px_8px_0px_#9FD62A] transition-all"
-          >
-            Join The Movement <ArrowRight size={28} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
-          </button>
-        </div>
-      </section>
+   
 
       <Footer />
     </main>

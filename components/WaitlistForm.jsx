@@ -97,11 +97,9 @@ export default function WaitlistForm() {
         ) : (
           <form onSubmit={handleSubmit} className="text-xl sm:text-2xl md:text-3xl leading-loose md:leading-[2.5] font-serif text-brand-dark relative z-10">
             
-            {/* Added break-words to handle tight container constraints */}
             <p className="mb-4 text-center md:text-left break-words">
               Hi, my name is{' '}
               <span className={`input-wrapper ${focusedInput === 'name' ? 'active' : ''}`}>
-                {/* The invisible sizer pushes the width perfectly */}
                 <span className="inline-input-sizer">{name || '[ Your Name ]'}</span>
                 <input 
                   type="text" 
@@ -141,8 +139,8 @@ export default function WaitlistForm() {
                   onChange={(e) => setLocation(e.target.value)}
                   required
                 >
-                  <option  value="" disabled>[ Select Area ]</option>
-                  <option >Downtown</option>
+                  <option value="" disabled>[ Select Area ]</option>
+                  <option>Downtown</option>
                   <option>Westboro</option>
                   <option>The Glebe</option>
                   <option>Centretown</option>
@@ -187,12 +185,15 @@ export default function WaitlistForm() {
                   {status === 'loading' ? 'Checking Vibes...' : 'Find My Circle '}
                 </button>
                 
-                <a 
-                  href="#meet" 
+                {/* Changed to type="submit" so it also triggers form submission! */}
+                <button 
+                  type="submit"
+                  disabled={status === 'loading'}
                   className="group relative inline-flex items-center justify-center bg-brand-primary text-brand-dark font-sans font-bold text-lg md:text-xl px-6 py-4 md:px-10 md:py-5 rounded-full hover:-translate-y-1 transition-transform w-full sm:w-auto border-4 border-brand-dark shadow-[4px_4px_0px_var(--color-brand-dark)] md:shadow-[6px_6px_0px_var(--color-brand-dark)] hover:shadow-[6px_6px_0px_var(--color-brand-lime-dark)] md:hover:shadow-[8px_8px_0px_var(--color-brand-lime-dark)] hover:bg-brand-secondary text-center leading-snug"
                 >
-                   Join the Next Meet & Greet 
-                </a>
+                   {status === 'loading' ? <Loader2 className="animate-spin mr-3" size={24} /> : null}
+                   {status === 'loading' ? 'Joining...' : 'Join the Next Meet & Greet'} 
+                </button>
               </div>
             </div>
           </form>

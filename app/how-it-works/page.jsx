@@ -8,10 +8,30 @@ export default function HowItWorksAndStandardsPage() {
   // --- HOW IT WORKS STATE ---
   const [hiwActiveStep, setHiwActiveStep] = useState(1);
   const [step3Option, setStep3Option] = useState('A'); // Sub-menu state for Step 3
-  const hiwTotalSteps = 4; // Updated from 3 to 4
+  const [hiwSliderHeight, setHiwSliderHeight] = useState('auto');
+  const hiwSlideRefs = useRef([]);
+  const hiwTotalSteps = 4; 
 
   const nextHiwStep = () => setHiwActiveStep((prev) => (prev < hiwTotalSteps ? prev + 1 : prev));
   const prevHiwStep = () => setHiwActiveStep((prev) => (prev > 1 ? prev - 1 : prev));
+
+  // Dynamic Background Colors for How It Works to prevent odd blank spaces
+  const hiwBgColors = ['bg-brand-light', 'bg-brand-accent', 'bg-brand-secondary', 'bg-brand-primary'];
+
+  // Dynamic Height calculation for How It Works Slider
+  useEffect(() => {
+    const updateHiwHeight = () => {
+      setTimeout(() => {
+        if (hiwSlideRefs.current[hiwActiveStep - 1]) {
+          setHiwSliderHeight(hiwSlideRefs.current[hiwActiveStep - 1].offsetHeight);
+        }
+      }, 50); // Small delay ensures DOM is fully rendered before calculating
+    };
+
+    updateHiwHeight();
+    window.addEventListener('resize', updateHiwHeight);
+    return () => window.removeEventListener('resize', updateHiwHeight);
+  }, [hiwActiveStep, step3Option]); // step3Option dependency added because it changes height inside slide 3
 
   // --- COMMUNITY STANDARDS STATE ---
   const [csActiveStep, setCsActiveStep] = useState(1);
@@ -20,19 +40,22 @@ export default function HowItWorksAndStandardsPage() {
   const csTotalSteps = 5;
   const csTabNames = ["Safety", "Respect", "Community", "Support", "Accountability"];
 
+  // Dynamic Background Colors for Community Standards to prevent odd blank spaces
+  const csBgColors = ['bg-brand-light', 'bg-brand-accent', 'bg-brand-secondary', 'bg-brand-primary', 'bg-brand-dark'];
+
   // Dynamic Height calculation for Community Standards Slider
   useEffect(() => {
-    const updateHeight = () => {
-      if (slideRefs.current[csActiveStep - 1]) {
-        setCsSliderHeight(slideRefs.current[csActiveStep - 1].offsetHeight);
-      }
+    const updateCsHeight = () => {
+      setTimeout(() => {
+        if (slideRefs.current[csActiveStep - 1]) {
+          setCsSliderHeight(slideRefs.current[csActiveStep - 1].offsetHeight);
+        }
+      }, 50);
     };
 
-    updateHeight();
-    
-    // Recalculate on window resize
-    window.addEventListener('resize', updateHeight);
-    return () => window.removeEventListener('resize', updateHeight);
+    updateCsHeight();
+    window.addEventListener('resize', updateCsHeight);
+    return () => window.removeEventListener('resize', updateCsHeight);
   }, [csActiveStep]);
 
   const nextCsStep = () => setCsActiveStep((prev) => (prev < csTotalSteps ? prev + 1 : prev));
@@ -50,7 +73,7 @@ export default function HowItWorksAndStandardsPage() {
 
       {/* --- HOW IT WORKS INTRO --- */}
       <section className="py-8 relative z-30">
-        <div className="max-w-5xl mx-auto px-5 md:px-12 relative">
+        <div className="max-w-5xl mx-auto px-5 md:px-12 relative mt-4 sm:mt-0">
           <div className="absolute -top-10 -right-4 md:-right-10 opacity-10 text-brand-primary pointer-events-none z-0">
             <Heart size={150} fill="currentColor" stroke="none" className="w-24 h-24 md:w-40 md:h-40" />
           </div>
@@ -113,16 +136,19 @@ export default function HowItWorksAndStandardsPage() {
             ))}
           </div>
 
-          {/* SLIDER CONTAINER */}
+          {/* SLIDER CONTAINER WITH DYNAMIC HEIGHT & BACKGROUND */}
           <div className="bg-brand-dark rounded-[24px] shadow-[6px_6px_0px_#9FD62A] md:shadow-[8px_8px_0px_#9FD62A] border-4 border-brand-dark relative z-10 w-full overflow-hidden">
-            <div className="rounded-[20px] bg-brand-light relative w-full overflow-hidden h-full">
+            <div 
+              className={`rounded-[20px] relative w-full overflow-hidden transition-all duration-500 ease-in-out ${hiwBgColors[hiwActiveStep - 1]}`}
+              style={{ height: hiwSliderHeight === 'auto' ? 'auto' : `${hiwSliderHeight}px` }}
+            >
               <div 
-                className="flex transition-transform duration-500 ease-in-out items-stretch h-full w-full"
+                className="flex transition-transform duration-500 ease-in-out items-start w-full"
                 style={{ transform: `translateX(-${(hiwActiveStep - 1) * 100}%)` }}
               >
                 
                 {/* --- SLIDE 1 --- */}
-                <div className="w-full h-full flex-shrink-0 p-5 sm:p-8 md:p-10 bg-brand-light flex flex-col">
+                <div ref={(el) => (hiwSlideRefs.current[0] = el)} className="w-full flex-shrink-0 p-5 sm:p-8 md:p-10 bg-brand-light flex flex-col">
                   {/* Top Text Content */}
                   <div className="max-w-4xl">
                     <h3 className="text-2xl sm:text-3xl md:text-4xl font-serif text-brand-dark mb-2">Start With a Meet & Greet</h3>
@@ -136,7 +162,7 @@ export default function HowItWorksAndStandardsPage() {
                   </div>
                   
                   {/* Bottom "What's Included" Box */}
-                  <div className="mt-auto pt-8 md:pt-12">
+                  <div className="mt-8 md:mt-12">
                     <div className="bg-brand-accent/20 p-5 sm:p-6 rounded-xl border-4 border-brand-dark md:rotate-1">
                       <h4 className="font-black text-brand-dark mb-4 text-lg sm:text-xl font-serif uppercase tracking-wide">What's Included:</h4>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 font-bold text-sm sm:text-base text-brand-dark/90">
@@ -161,7 +187,7 @@ export default function HowItWorksAndStandardsPage() {
                 </div>
 
                 {/* --- SLIDE 2 --- */}
-                <div className="w-full h-full flex-shrink-0 p-5 sm:p-8 md:p-10 bg-brand-accent border-l-4 border-brand-dark flex flex-col">
+                <div ref={(el) => (hiwSlideRefs.current[1] = el)} className="w-full flex-shrink-0 p-5 sm:p-8 md:p-10 bg-brand-accent border-l-4 border-brand-dark flex flex-col">
                   {/* Top Text Content */}
                   <div className="max-w-4xl">
                     <h3 className="text-2xl sm:text-3xl md:text-4xl font-serif text-brand-dark mb-6">Find Your People</h3>
@@ -174,7 +200,7 @@ export default function HowItWorksAndStandardsPage() {
                   </div>
                   
                   {/* Bottom "No Compatibility" Box */}
-                  <div className="mt-auto pt-8 md:pt-12">
+                  <div className="mt-8 md:mt-12">
                     <div className="bg-brand-cream p-6 sm:p-8 rounded-2xl border-4 border-brand-dark shadow-[6px_6px_0px_#1A5415] md:-rotate-1 flex flex-col lg:flex-row items-center justify-between gap-6 w-full">
                       <div className="text-left flex-1">
                         <p className="font-black text-2xl sm:text-3xl lg:text-4xl text-brand-lime-dark uppercase tracking-wide leading-tight text-center lg:text-left">
@@ -190,7 +216,7 @@ export default function HowItWorksAndStandardsPage() {
                 </div>
 
                 {/* --- SLIDE 3 (WITH SUB-MENUS) --- */}
-                <div className="w-full h-full flex-shrink-0 p-5 sm:p-8 md:p-10 bg-brand-secondary border-l-4 border-brand-dark flex flex-col">
+                <div ref={(el) => (hiwSlideRefs.current[2] = el)} className="w-full flex-shrink-0 p-5 sm:p-8 md:p-10 bg-brand-secondary border-l-4 border-brand-dark flex flex-col">
                   <div className="mb-4">
                     <h3 className="text-2xl sm:text-3xl md:text-4xl font-serif text-brand-dark mb-2">Choose Your Path</h3>
                     <p className="text-sm sm:text-base md:text-lg font-bold text-brand-dark/80">After your Meet & Greet, continue your journey in one of two ways.</p>
@@ -217,10 +243,10 @@ export default function HowItWorksAndStandardsPage() {
                   </div>
 
                   {/* DYNAMIC CONTENT AREA */}
-                  <div className="flex-grow flex flex-col h-full animate-fade-in">
+                  <div className="flex flex-col animate-fade-in w-full">
                     {step3Option === 'A' ? (
                       /* Option A Content */
-                      <div className="bg-brand-cream p-5 sm:p-6 md:p-8 rounded-2xl border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] flex flex-col flex-grow relative">
+                      <div className="bg-brand-cream p-5 sm:p-6 md:p-8 rounded-2xl border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] flex flex-col">
                         <h4 className="text-xl sm:text-2xl md:text-3xl font-serif font-black text-brand-dark">Join a Friendship Club</h4>
                         <p className="text-base sm:text-lg font-black text-brand-lime-dark mb-4">Starting at $40/month</p>
                         
@@ -245,7 +271,7 @@ export default function HowItWorksAndStandardsPage() {
                         </div>
 
                         {/* Memberships Layout */}
-                        <div className="bg-brand-accent/20 p-4 rounded-xl border-2 border-brand-dark mt-auto border-dashed">
+                        <div className="bg-brand-accent/20 p-4 rounded-xl border-2 border-brand-dark mt-4 border-dashed">
                           <p className="font-bold text-sm sm:text-base mb-3 text-center uppercase tracking-wide font-serif">Membership Options</p>
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 text-xs sm:text-sm font-bold">
                             <div className="bg-brand-cream px-2 py-2 rounded border-2 border-brand-dark text-center flex justify-center items-center">1 Month: $40</div>
@@ -257,15 +283,15 @@ export default function HowItWorksAndStandardsPage() {
                       </div>
                     ) : (
                       /* Option B Content */
-                      <div className="bg-brand-dark text-brand-cream p-5 sm:p-6 md:p-8 rounded-2xl border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] flex flex-col flex-grow relative">
+                      <div className="bg-brand-dark text-brand-cream p-5 sm:p-6 md:p-8 rounded-2xl border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] flex flex-col">
                         <h4 className="text-xl sm:text-2xl md:text-3xl font-serif font-black text-brand-cream">Join a Curated Experience</h4>
                         <p className="text-base sm:text-lg font-black text-brand-primary mb-4">$250 Experience Pass</p>
                         
-                        <p className="text-sm sm:text-base md:text-lg font-medium mb-6 text-brand-cream/90 flex-grow max-w-2xl">
+                        <p className="text-sm sm:text-base md:text-lg font-medium mb-6 text-brand-cream/90 max-w-2xl">
                           Prefer smaller groups and a more intimate experience? Our Curated Experiences are designed for people who want to build deeper connections within a small group setting.
                         </p>
                         
-                        <div className="bg-brand-cream text-brand-dark p-5 rounded-xl border-4 border-brand-dark mt-auto md:rotate-1 shadow-[4px_4px_0px_#F8B800] w-full md:w-fit">
+                        <div className="bg-brand-cream text-brand-dark p-5 rounded-xl border-4 border-brand-dark mt-4 md:rotate-1 shadow-[4px_4px_0px_#F8B800] w-full md:w-fit">
                           <h5 className="font-black text-sm sm:text-base mb-3 font-serif uppercase">Each Experience Includes:</h5>
                           <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 font-bold text-sm sm:text-base text-brand-dark/90">
                             <li className="flex items-center gap-2"><span className="text-brand-lime-dark">✓</span> 5 weeks</li>
@@ -281,9 +307,9 @@ export default function HowItWorksAndStandardsPage() {
                 </div>
 
                 {/* --- SLIDE 4: BUILD YOUR CIRCLE --- */}
-                <div className="w-full h-full flex-shrink-0 p-5 sm:p-8 md:p-10 bg-brand-primary border-l-4 border-brand-dark flex flex-col">
+                <div ref={(el) => (hiwSlideRefs.current[3] = el)} className="w-full flex-shrink-0 p-5 sm:p-8 md:p-10 bg-brand-primary border-l-4 border-brand-dark flex flex-col">
                   {/* Top Text Content */}
-                  <div className="max-w-4xl flex-grow">
+                  <div className="max-w-4xl">
                     <h3 className="text-2xl sm:text-3xl md:text-4xl font-serif text-brand-dark mb-4">Build Your Circle</h3>
                     
                     <div className="text-base sm:text-lg md:text-xl font-medium text-brand-dark/90 space-y-3 max-w-3xl">
@@ -415,10 +441,10 @@ export default function HowItWorksAndStandardsPage() {
             })}
           </div>
 
-          {/* DYNAMIC HEIGHT SLIDER CONTAINER */}
+          {/* DYNAMIC HEIGHT SLIDER CONTAINER WITH DYNAMIC BACKGROUND */}
           <div className="bg-brand-dark rounded-[24px] shadow-[6px_6px_0px_#1A5415] md:shadow-[8px_8px_0px_#1A5415] border-4 border-brand-dark relative z-10 w-full overflow-hidden">
             <div 
-              className="rounded-[20px] bg-brand-light relative w-full overflow-hidden transition-[height] duration-500 ease-in-out"
+              className={`rounded-[20px] relative w-full overflow-hidden transition-all duration-500 ease-in-out ${csBgColors[csActiveStep - 1]}`}
               style={{ height: csSliderHeight === 'auto' ? 'auto' : `${csSliderHeight}px` }}
             >
               <div 
@@ -470,7 +496,7 @@ export default function HowItWorksAndStandardsPage() {
 
                 {/* --- SLIDE 3: Cliques & Privacy --- */}
                 <div ref={(el) => (slideRefs.current[2] = el)} className="w-full flex-shrink-0 p-5 sm:p-8 md:p-10 bg-brand-secondary border-l-4 border-brand-dark flex flex-col gap-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start h-full">
                     {/* Community Over Cliques */}
                     <div className="bg-brand-light rounded-[24px] p-5 sm:p-6 border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] relative flex flex-col gap-4 md:-rotate-1 h-full">
                       <div>
@@ -500,7 +526,7 @@ export default function HowItWorksAndStandardsPage() {
 
                 {/* --- SLIDE 4: Speak Up & Shared Responsibility --- */}
                 <div ref={(el) => (slideRefs.current[3] = el)} className="w-full flex-shrink-0 p-5 sm:p-8 md:p-10 bg-brand-primary text-brand-dark border-l-4 border-brand-dark flex flex-col gap-6">
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 items-start">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-10 items-start h-full">
                     
                     <div className="flex flex-col gap-5 h-full">
                       <div>
