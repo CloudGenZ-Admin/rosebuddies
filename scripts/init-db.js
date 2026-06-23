@@ -10,6 +10,7 @@ import { MeetPerson } from "../lib/models/meetPerson.js";
 import { FooterSubscriber } from "../lib/models/footerSubscriber.js";
 import { VibeCheck } from "../lib/models/vibeCheck.js";
 import { GetStartedMeet } from "../lib/models/getStartedMeet.js";
+import { UserPreference } from "../lib/models/userPreference.js";
 
 async function initDB() {
   try {

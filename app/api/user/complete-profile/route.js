@@ -17,30 +17,11 @@ export async function POST(request) {
     const phoneNumber = formData.get("phoneNumber");
     const socialLink = formData.get("socialLink");
     const bio = formData.get("bio");
-    const socialEnergy = formData.get("socialEnergy");
-    
-    // Arrays come as JSON strings or multiple fields. We'll assume JSON strings from frontend for simplicity:
-    let preferredNeighborhoods = [];
-    let friendshipGoals = [];
-    let availability = [];
-
-    try {
-      preferredNeighborhoods = formData.get("preferredNeighborhoods") ? JSON.parse(formData.get("preferredNeighborhoods")) : [];
-      friendshipGoals = formData.get("friendshipGoals") ? JSON.parse(formData.get("friendshipGoals")) : [];
-      availability = formData.get("availability") ? JSON.parse(formData.get("availability")) : [];
-    } catch (e) {
-      return NextResponse.json({ error: "Invalid array data format" }, { status: 400 });
-    }
-
     const payload = {
       dateOfBirth,
       phoneNumber,
       socialLink: socialLink || undefined,
-      bio: bio || undefined,
-      socialEnergy: socialEnergy || undefined,
-      preferredNeighborhoods,
-      friendshipGoals,
-      availability
+      bio: bio || undefined
     };
 
     const validationResult = completeProfileSchema.safeParse(payload);
@@ -71,10 +52,6 @@ export async function POST(request) {
         phoneNumber,
         socialLink,
         bio,
-        socialEnergy,
-        preferredNeighborhoods,
-        friendshipGoals,
-        availability,
         ...(imagePath && { profileImage: imagePath })
       });
     } else {
@@ -84,10 +61,6 @@ export async function POST(request) {
         phoneNumber,
         socialLink,
         bio,
-        socialEnergy,
-        preferredNeighborhoods,
-        friendshipGoals,
-        availability,
         profileImage: imagePath
       });
     }
