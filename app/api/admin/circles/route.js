@@ -3,6 +3,8 @@ import { verifyAdmin } from "../../../../lib/middleware/auth.js";
 import { Circle } from "../../../../lib/models/circle.js";
 import { CircleMember } from "../../../../lib/models/circleMember.js";
 import { Event } from "../../../../lib/models/event.js";
+import { User } from "../../../../lib/models/user.js";
+import { EventAttendance } from "../../../../lib/models/eventAttendance.js";
 import { createCircleSchema } from "../../../../lib/validations/admin.js";
 import { saveUploadedFile } from "../../../../lib/utils/uploadService.js";
 import { sequelize } from "../../../../lib/db.js";
@@ -16,7 +18,24 @@ export async function GET(request) {
     const circles = await Circle.findAll({
       order: [["createdAt", "DESC"]],
       include: [
-        { model: Event, as: "events", attributes: ["id"] },
+        { 
+          model: Event, 
+          as: "events",
+          include: [
+            {
+              model: User,
+              as: 'attendees',
+              attributes: ['id', 'firstName', 'lastName'],
+              through: { attributes: ['rsvpStatus', 'didAttend', 'noShowFlag'] }
+            }
+          ]
+        },
+        { 
+          model: User, 
+          as: "members",
+          through: { attributes: ['status', 'exitReason'] },
+          attributes: ['id', 'firstName', 'lastName', 'email'] 
+        }
       ]
     });
 
