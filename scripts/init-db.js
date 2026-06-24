@@ -11,6 +11,10 @@ import { FooterSubscriber } from "../lib/models/footerSubscriber.js";
 import { VibeCheck } from "../lib/models/vibeCheck.js";
 import { GetStartedMeet } from "../lib/models/getStartedMeet.js";
 import { UserPreference } from "../lib/models/userPreference.js";
+import { Circle } from "../lib/models/circle.js";
+import { CircleMember } from "../lib/models/circleMember.js";
+import { Event } from "../lib/models/event.js";
+import { EventAttendance } from "../lib/models/eventAttendance.js";
 
 async function initDB() {
   try {
