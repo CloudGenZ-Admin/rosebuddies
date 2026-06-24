@@ -578,13 +578,13 @@ function WaitlistForm({ vibeCheckId }) {
 
             <div className="mt-16 text-center">
               <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-                <button 
+                {/* <button 
                   type="button"
                   onClick={() => document.getElementById('vibe-check').scrollIntoView({ behavior: 'smooth' })}
                   className="group relative inline-flex items-center justify-center bg-brand-light text-brand-dark font-sans font-bold text-xl px-10 py-5 rounded-full hover:-translate-y-1 transition-transform w-full sm:w-auto border-4 border-brand-dark shadow-[6px_6px_0px_var(--color-brand-dark)] hover:shadow-[8px_8px_0px_var(--color-brand-lime-dark)] hover:bg-brand-cream"
                 >
                   Take the Vibe Check
-                </button>
+                </button> */}
                 <button 
                   type="submit" 
                   disabled={status === 'loading'}

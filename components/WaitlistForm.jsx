@@ -176,14 +176,14 @@ export default function WaitlistForm() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center">
-                <button 
+                {/* <button 
                   type="submit" 
                   disabled={status === 'loading'}
                   className="group relative inline-flex items-center justify-center bg-brand-dark text-brand-cream font-sans font-bold text-lg md:text-xl px-6 py-4 md:px-10 md:py-5 rounded-full hover:-translate-y-1 transition-transform disabled:opacity-70 disabled:hover:translate-y-0 w-full sm:w-auto border-4 border-brand-dark shadow-[4px_4px_0px_var(--color-brand-lime-dark)] md:shadow-[6px_6px_0px_var(--color-brand-lime-dark)] hover:shadow-[6px_6px_0px_var(--color-brand-secondary)] md:hover:shadow-[8px_8px_0px_var(--color-brand-secondary)]"
                 >
                   {status === 'loading' ? <Loader2 className="animate-spin mr-3" size={24} /> : null}
                   {status === 'loading' ? 'Checking Vibes...' : 'Find My Circle '}
-                </button>
+                </button> */}
                 
                 {/* Changed to type="submit" so it also triggers form submission! */}
                 <button 
