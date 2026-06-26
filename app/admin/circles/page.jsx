@@ -1,152 +1,295 @@
 "use client";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import DataTable from "../../../components/admin/DataTable";
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Calendar, MapPin, Sparkles, Heart, ArrowRight, Info, Users, Clock } from 'lucide-react';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
-export default function CirclesPage() {
-  const [circles, setCircles] = useState([]);
+export default function UserCirclesPage() {
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState('my-circle'); 
+  const [myCircle, setMyCircle] = useState(null);
+  const [exploreCircles, setExploreCircles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
+  const [interestLoading, setInterestLoading] = useState(null); 
+  const [message, setMessage] = useState({ type: '', text: '' });
 
-  // Form states
-  const [formData, setFormData] = useState({ name: '', type: '', status: 'forming', startDate: '', endDate: '', description: '' });
-  const [file, setFile] = useState(null);
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+    fetchAllData(token);
+  }, [router]);
 
-  const fetchCircles = async () => {
+  const fetchAllData = async (token) => {
     setLoading(true);
-    const token = localStorage.getItem("adminToken");
     try {
-      const res = await fetch("/api/admin/circles", {
-        headers: { Authorization: `Bearer ${token}` },
+      const myRes = await fetch('/api/user/circles/my-circle', {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
-      const json = await res.json();
-      if (res.ok) setCircles(json.data);
+      if (myRes.ok) {
+        const myData = await myRes.json();
+        setMyCircle(myData.data);
+      } else {
+        setMyCircle(null);
+      }
+
+      const exploreRes = await fetch('/api/user/circles/explore', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (exploreRes.ok) {
+        const exploreData = await exploreRes.json();
+        setExploreCircles(exploreData.data);
+      }
     } catch (error) {
-      console.error("Failed to fetch circles", error);
+      console.error("Failed to fetch circles data", error);
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchCircles();
-  }, []);
-
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("adminToken");
-    
-    const data = new FormData();
-    Object.keys(formData).forEach(key => data.append(key, formData[key]));
-    if (file) data.append("img", file);
+  const handleExpressInterest = async (circleId) => {
+    const token = localStorage.getItem('token');
+    setInterestLoading(circleId);
+    setMessage({ type: '', text: '' });
 
     try {
-      const res = await fetch("/api/admin/circles", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: data,
+      const res = await fetch(`/api/user/circles/${circleId}/interest`, {
+        method: 'POST',
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
+      const data = await res.json();
+
       if (res.ok) {
-        setShowModal(false);
-        setFormData({ name: '', type: '', status: 'forming', startDate: '', endDate: '', description: '' });
-        setFile(null);
-        fetchCircles(); // Refresh list
+        setMessage({ type: 'success', text: "Awesome! You've expressed interest. The admin will review your profile." });
       } else {
-        const err = await res.json();
-        alert("Error creating circle: " + JSON.stringify(err.errors || err.error));
+        setMessage({ type: 'error', text: data.error || "Something went wrong." });
       }
     } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+      setMessage({ type: 'error', text: "Network error. Try again." });
+    } finally {
+      setInterestLoading(null);
+      setTimeout(() => setMessage({ type: '', text: '' }), 5000);
     }
   };
 
-  const columns = [
-    { header: "Circle Name", key: "name", render: (row) => <span className="font-bold text-[#4B5E50]">{row.name}</span> },
-    { header: "Type", key: "type", render: (row) => <span className="capitalize">{row.type}</span> },
-    { header: "Status", key: "status", render: (row) => (
-        <span className={`px-2 py-1 rounded-full text-xs font-bold ${row.status === 'active' ? 'bg-[#9FD62A]/20 text-[#4B5E50]' : 'bg-gray-100 text-gray-500'}`}>
-          {row.status}
-        </span>
-    )},
-    { header: "Members", render: (row) => row.members?.length || 0 },
-    { header: "Events", render: (row) => row.events?.length || 0 },
-    { header: "Actions", render: (row) => (
-        <Link href={`/admin/circles/${row.id}`} className="text-[#D48C71] font-bold hover:underline">
-          Manage
-        </Link>
-    )}
-  ];
+  const formatDate = (dateString) => {
+    if (!dateString) return "TBD";
+    const options = { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-brand-light relative">
+        <Navbar />
+        <main className="flex-grow flex items-center justify-center pt-28">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-brand-dark"></div>
+        </main>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full pb-24 md:pb-8 px-4 sm:px-6 lg:px-8 pt-6 md:pt-8 relative">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 md:mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#4B5E50] mb-2">Circle Management</h1>
-          <p className="text-sm sm:text-base text-gray-500">Create, edit, and manage group circles.</p>
-        </div>
-        <button 
-          onClick={() => setShowModal(true)}
-          className="bg-[#D48C71] text-white px-5 py-2.5 rounded-full font-bold text-sm hover:bg-[#c27a60] transition-colors"
-        >
-          + Create New Circle
-        </button>
-      </div>
+    <div className="min-h-screen flex flex-col bg-brand-light relative">
+      <Navbar />
+      <main className="flex-grow pt-28 pb-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="absolute inset-0 z-0 opacity-[0.06] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, #1A5415 2.5px, transparent 2.5px)', backgroundSize: '32px 32px' }}></div>
+        <div className="max-w-6xl mx-auto relative z-10 animate-in slide-in-from-bottom-4 duration-500">
+          
+          <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-brand-accent px-3 py-1.5 rounded-md border-2 border-brand-dark font-black text-xs uppercase tracking-wide mb-4 -rotate-2 shadow-[2px_2px_0px_#1A5415]">
+                <Sparkles size={14} className="fill-brand-dark text-brand-dark" />
+                Your Community Hub
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-black font-serif text-brand-dark">
+                Circles
+              </h1>
+            </div>
 
-      <DataTable columns={columns} data={circles} loading={loading} />
-
-      {/* Create Modal */}
-      {showModal && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex justify-center items-center p-4">
-          <div className="bg-white rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h2 className="text-2xl font-serif font-bold text-[#4B5E50] mb-6">Create Circle</h2>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">Name</label>
-                <input required type="text" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} className="w-full border rounded-xl p-3 text-sm" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1">Type</label>
-                  <input required type="text" value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} className="w-full border rounded-xl p-3 text-sm" placeholder="e.g. social, study" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1">Status</label>
-                  <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full border rounded-xl p-3 text-sm">
-                    <option value="forming">Forming</option>
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                    <option value="archived">Archived</option>
-                  </select>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1">Start Date</label>
-                  <input type="date" value={formData.startDate} onChange={e => setFormData({...formData, startDate: e.target.value})} className="w-full border rounded-xl p-3 text-sm" />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1">End Date</label>
-                  <input type="date" value={formData.endDate} onChange={e => setFormData({...formData, endDate: e.target.value})} className="w-full border rounded-xl p-3 text-sm" />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">Description</label>
-                <textarea rows="3" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} className="w-full border rounded-xl p-3 text-sm"></textarea>
-              </div>
-              <div>
-                <label className="block text-xs font-bold text-gray-500 mb-1">Image Banner</label>
-                <input type="file" onChange={e => setFile(e.target.files[0])} className="w-full text-sm" accept="image/*" />
-              </div>
-              
-              <div className="flex gap-3 justify-end pt-4">
-                <button type="button" onClick={() => setShowModal(false)} className="px-5 py-2.5 text-sm font-bold text-gray-500 hover:text-gray-800">Cancel</button>
-                <button type="submit" className="bg-[#4B5E50] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-[#3a4a3f]">Create Circle</button>
-              </div>
-            </form>
+            <div className="flex bg-brand-cream border-4 border-brand-dark rounded-xl shadow-[4px_4px_0px_#1A5415] overflow-hidden w-full md:w-auto">
+              <button onClick={() => setActiveTab('my-circle')} className={`flex-1 md:flex-none px-6 py-3 font-black text-sm md:text-base uppercase tracking-wide transition-colors ${activeTab === 'my-circle' ? 'bg-brand-primary text-brand-dark' : 'text-brand-dark hover:bg-brand-light'}`}>
+                My Circle
+              </button>
+              <div className="w-1 bg-brand-dark"></div>
+              <button onClick={() => setActiveTab('explore')} className={`flex-1 md:flex-none px-6 py-3 font-black text-sm md:text-base uppercase tracking-wide transition-colors ${activeTab === 'explore' ? 'bg-brand-primary text-brand-dark' : 'text-brand-dark hover:bg-brand-light'}`}>
+                Explore
+              </button>
+            </div>
           </div>
+
+          {message.text && (
+            <div className={`mb-8 p-4 border-4 border-brand-dark rounded-xl font-bold shadow-[4px_4px_0px_#1A5415] animate-in slide-in-from-top-2 flex items-center gap-3 ${message.type === 'success' ? 'bg-brand-lime-dark text-brand-light' : 'bg-red-100 text-red-600'}`}>
+              <Info size={24} />
+              {message.text}
+            </div>
+          )}
+
+          {activeTab === 'my-circle' && (
+            <div className="space-y-10">
+              {!myCircle ? (
+                <div className="bg-brand-cream p-10 md:p-16 rounded-[24px] border-4 border-brand-dark shadow-[8px_8px_0px_#1A5415] text-center flex flex-col items-center">
+                  <div className="w-24 h-24 bg-brand-light border-4 border-brand-dark rounded-full flex items-center justify-center shadow-[4px_4px_0px_#1A5415] mb-6 rotate-[-5deg]">
+                    <Users size={40} className="text-brand-dark" />
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-serif font-black text-brand-dark mb-4">You're Not in a Circle Yet!</h2>
+                  <p className="text-lg font-bold font-sans text-brand-dark/80 mb-8 max-w-xl">
+                    Ready to meet real people and build genuine connections? Head over to the Explore tab to find circles that are currently forming.
+                  </p>
+                  <button onClick={() => setActiveTab('explore')} className="bg-brand-primary text-brand-dark font-black px-8 py-4 rounded-xl border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#1A5415] transition-all flex items-center gap-2">
+                    Explore Circles <ArrowRight strokeWidth={3} />
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="bg-brand-dark p-8 md:p-10 rounded-[32px] border-4 border-brand-dark shadow-[8px_8px_0px_#9FD62A] text-brand-light relative overflow-hidden">
+                    <div className="absolute -top-10 -right-10 opacity-20 pointer-events-none">
+                       <Heart size={200} fill="currentColor" />
+                    </div>
+                    <span className="inline-block bg-brand-lime-dark text-brand-dark font-black text-xs uppercase tracking-widest px-3 py-1 rounded-md border-2 border-brand-dark mb-4 transform -rotate-2">
+                      {myCircle.type} Circle
+                    </span>
+                    <h2 className="text-4xl md:text-5xl font-serif font-black mb-4">{myCircle.name}</h2>
+                    <p className="text-lg md:text-xl font-medium max-w-2xl text-brand-cream/90">
+                      {myCircle.description || "This is your active community space. Show up, engage, and let friendships grow naturally."}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div className="lg:col-span-1 space-y-6">
+                      <h3 className="text-2xl font-serif font-black text-brand-dark border-b-4 border-brand-dark pb-2 inline-block">Upcoming Events</h3>
+                      {myCircle.events && myCircle.events.length > 0 ? (
+                        <div className="space-y-4">
+                          {myCircle.events.map((event, idx) => (
+                            <div key={event.id} className={`bg-brand-cream p-5 rounded-2xl border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 transition-transform ${idx % 2 === 0 ? 'rotate-1' : '-rotate-1'}`}>
+                              <h4 className="font-black text-xl text-brand-dark mb-3">{event.title}</h4>
+                              <div className="flex items-center gap-2 text-sm font-bold text-brand-dark/80 mb-2">
+                                <Calendar size={16} className="text-brand-lime-dark" />
+                                {formatDate(event.date)}
+                              </div>
+                              <div className="flex items-center gap-2 text-sm font-bold text-brand-dark/80">
+                                <MapPin size={16} className="text-brand-accent" />
+                                {event.location}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="bg-brand-light p-6 rounded-2xl border-4 border-dashed border-brand-dark text-center font-bold text-brand-dark/60">
+                          No events scheduled yet. Check back soon!
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="lg:col-span-2 space-y-6">
+                       <h3 className="text-2xl font-serif font-black text-brand-dark border-b-4 border-brand-dark pb-2 inline-block">Meet Your Circle</h3>
+                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {myCircle.members && myCircle.members.map((member) => (
+                            <div key={member.id} className="bg-brand-light p-5 rounded-[20px] border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] flex gap-4 items-start">
+                                {/* MEMBER PROFILE IMAGE - FORMATTED PATH */}
+                                <div className="w-16 h-16 rounded-full border-4 border-brand-dark bg-brand-secondary overflow-hidden flex-shrink-0">
+                                  {member.profile?.profileImage ? (
+                                    <img src={`/uploads/${member.id}/${member.profile.profileImage}`} alt={member.firstName} className="w-full h-full object-cover" />
+                                  ) : (
+                                    <div className="w-full h-full flex items-center justify-center font-black text-xl text-brand-dark">
+                                      {member.firstName.charAt(0)}
+                                    </div>
+                                  )}
+                                </div>
+                                <div>
+                                  <h4 className="font-black text-lg text-brand-dark">{member.firstName} {member.lastName}</h4>
+                                  <p className="text-xs font-bold text-brand-dark/60 mb-2 line-clamp-2">
+                                    {member.profile?.bio || "A mystery waiting to be discovered."}
+                                  </p>
+                                  {member.profile?.socialLink && (
+                                    <a href={member.profile.socialLink} target="_blank" rel="noreferrer" className="text-xs font-black text-brand-lime-dark underline uppercase">
+                                      View Social
+                                    </a>
+                                  )}
+                                </div>
+                            </div>
+                          ))}
+                       </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {activeTab === 'explore' && (
+            <div className="space-y-8">
+              <div className="bg-brand-secondary p-8 rounded-2xl border-4 border-brand-dark shadow-[6px_6px_0px_#1A5415] transform -rotate-1">
+                <h2 className="text-2xl md:text-3xl font-serif font-black text-brand-dark mb-2">Find Your People.</h2>
+                <p className="text-base font-bold text-brand-dark/90">
+                  These circles are currently forming. Express interest in the ones that match your vibe, and our community team will help curate the perfect group for you.
+                </p>
+              </div>
+
+              {exploreCircles.length === 0 ? (
+                <div className="text-center py-20 font-bold text-xl text-brand-dark/50">
+                  No new circles are forming right now. Check back soon!
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {exploreCircles.map((circle) => (
+                    <div key={circle.id} className="bg-brand-cream rounded-[24px] border-4 border-brand-dark shadow-[6px_6px_0px_#1A5415] flex flex-col hover:-translate-y-2 hover:shadow-[10px_10px_0px_#1A5415] transition-all duration-300 overflow-hidden">
+                      
+                      {/* CIRCLE IMAGE - FORMATTED PATH */}
+                      <div className="h-40 border-b-4 border-brand-dark bg-brand-light relative">
+                        {circle.img ? (
+                          <img src={`/uploads/${circle.id}/${circle.img}`} alt={circle.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center opacity-50 bg-brand-primary">
+                             <Users size={48} strokeWidth={1.5} className="text-brand-dark mb-2" />
+                             <span className="font-black font-serif uppercase tracking-widest">{circle.type}</span>
+                          </div>
+                        )}
+                        <div className="absolute top-3 right-3 bg-brand-light px-3 py-1 rounded-full border-2 border-brand-dark text-xs font-black shadow-[2px_2px_0px_#1A5415] flex items-center gap-1">
+                          <Clock size={12} className="text-brand-accent"/> Forming
+                        </div>
+                      </div>
+
+                      <div className="p-6 flex flex-col flex-grow">
+                        <h3 className="text-2xl font-serif font-black text-brand-dark mb-2">{circle.name}</h3>
+                        <p className="text-sm font-medium text-brand-dark/80 mb-6 flex-grow line-clamp-3">
+                          {circle.description || "Join this new circle to experience real-life connections, great conversations, and meaningful friendships."}
+                        </p>
+                        
+                        <div className="bg-brand-light p-3 rounded-xl border-2 border-brand-dark mb-6 text-xs font-bold shadow-inner">
+                          <strong className="text-brand-lime-dark block uppercase tracking-wider mb-1">Upcoming Events: {circle.events?.length || 0}</strong>
+                          {circle.events && circle.events.length > 0 ? (
+                             <span className="truncate block">{circle.events[0].title}</span>
+                          ) : (
+                             <span className="text-brand-dark/50 italic">Schedule TBD</span>
+                          )}
+                        </div>
+
+                        <button 
+                          onClick={() => handleExpressInterest(circle.id)}
+                          disabled={interestLoading === circle.id}
+                          className="w-full py-3.5 bg-brand-dark text-brand-light font-black uppercase tracking-wide rounded-xl border-4 border-brand-dark shadow-[4px_4px_0px_#9FD62A] hover:bg-brand-lime-dark hover:text-brand-dark hover:shadow-[4px_4px_0px_#1A5415] active:translate-y-1 active:shadow-none transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                          {interestLoading === circle.id ? 'Sending...' : "I'm Interested!"}
+                        </button>
+                      </div>
+
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
         </div>
-      )}
+      </main>
+      <Footer />
     </div>
   );
 }
