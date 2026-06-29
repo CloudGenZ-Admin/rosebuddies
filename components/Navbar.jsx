@@ -1,15 +1,27 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Menu, X, ArrowRight, Heart } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { 
+  Menu, X, ArrowRight, Heart, ChevronDown, 
+  LogOut, LayoutDashboard, Users, Settings, User 
+} from 'lucide-react';
 import WaitlistModal from './WaitlistModal'; // Adjust import path if needed
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false); // Mobile menu state
   const [isWaitlistOpen, setIsWaitlistOpen] = useState(false); // Waitlist modal state
+  
+  // Auth & Dropdown States
+  const [mounted, setMounted] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
+  const dropdownRef = useRef(null);
+  const router = useRouter();
 
   // Prevent background scrolling when mobile menu is open
-  // Note: WaitlistModal handles its own scroll locking now
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
@@ -18,6 +30,44 @@ export default function Navbar() {
     }
     return () => { document.body.style.overflow = "unset"; };
   }, [isOpen]);
+
+  // Handle Client-Side Hydration and Auth Check
+  useEffect(() => {
+    setMounted(true);
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('user');
+
+    if (token && userData) {
+      setIsLoggedIn(true);
+      try {
+        setUser(JSON.parse(userData));
+      } catch (e) {
+        console.error("Failed to parse user data", e);
+      }
+    }
+  }, []);
+
+  // Handle click outside to close desktop dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Handle Logout
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
+    setUser(null);
+    setIsDropdownOpen(false);
+    setIsOpen(false);
+    router.push('/');
+  };
 
   return (
     <>
@@ -51,13 +101,66 @@ export default function Navbar() {
           </div>
 
           {/* Actions (Desktop) */}
-          <div className="hidden lg:flex items-center gap-2 xl:gap-4">
-            <Link href="/login" className="lg:px-4 lg:py-2 xl:px-6 xl:py-2.5 bg-brand-light text-brand-dark font-bold font-sans rounded-full border-2 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#1A5415] transition-all whitespace-nowrap cursor-pointer lg:text-sm xl:text-base">
-              Login
-            </Link>
-            <Link href="/signup" className="lg:px-4 lg:py-2 xl:px-6 xl:py-2.5 bg-brand-cream text-brand-dark font-bold font-sans rounded-full border-2 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#1A5415] transition-all whitespace-nowrap cursor-pointer lg:text-sm xl:text-base">
-              Sign Up
-            </Link>
+          <div className="hidden lg:flex items-center gap-2 xl:gap-4 relative">
+            
+            {/* Display loading skeleton or nothing before mounted to avoid hydration mismatch */}
+            {mounted && (
+              isLoggedIn ? (
+                // --- LOGGED IN STATE (DESKTOP) ---
+                <div className="relative" ref={dropdownRef}>
+                  <button 
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="flex items-center gap-2 lg:px-2 lg:py-1 xl:px-3 xl:py-1.5 bg-brand-light text-brand-dark font-bold font-sans rounded-full border-2 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#1A5415] transition-all cursor-pointer"
+                  >
+                    {user?.photoUrl ? (
+                      <img src={user.photoUrl} alt="Profile" className="w-8 h-8 rounded-full border-2 border-brand-dark object-cover" />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-brand-primary flex items-center justify-center border-2 border-brand-dark">
+                        <User size={16} strokeWidth={2.5} />
+                      </div>
+                    )}
+                    <span className="hidden xl:block max-w-[100px] truncate pr-1">
+                      {user?.firstName || 'Profile'}
+                    </span>
+                    <ChevronDown size={18} strokeWidth={3} className={`mr-1 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* Dropdown Menu */}
+                  <div className={`absolute right-0 top-full mt-4 w-64 bg-brand-light border-4 border-brand-dark shadow-[6px_6px_0px_#1A5415] rounded-xl flex flex-col overflow-hidden z-50 transition-all origin-top-right ${isDropdownOpen ? 'scale-100 opacity-100 visible' : 'scale-95 opacity-0 invisible'}`}>
+                    
+                    {/* User Info Header inside Dropdown */}
+                    <div className="px-4 py-3 border-b-4 border-brand-dark bg-brand-cream">
+                      <p className="font-bold text-brand-dark truncate">{user?.firstName} {user?.lastName}</p>
+                      <p className="text-xs font-semibold text-brand-dark opacity-70 truncate">{user?.email}</p>
+                    </div>
+
+                    <Link href="/dashboard" onClick={() => setIsDropdownOpen(false)} className="px-4 py-3 border-b-2 border-brand-dark hover:bg-brand-cream hover:pl-6 transition-all flex items-center gap-3 font-bold text-brand-dark cursor-pointer">
+                      <LayoutDashboard size={18} strokeWidth={2.5} /> My Dashboard
+                    </Link>
+                    <Link href="/circles" onClick={() => setIsDropdownOpen(false)} className="px-4 py-3 border-b-2 border-brand-dark hover:bg-brand-cream hover:pl-6 transition-all flex items-center gap-3 font-bold text-brand-dark cursor-pointer">
+                      <Users size={18} strokeWidth={2.5} /> My Circle
+                    </Link>
+                    <Link href="/dashboard" onClick={() => setIsDropdownOpen(false)} className="px-4 py-3 border-b-2 border-brand-dark hover:bg-brand-cream hover:pl-6 transition-all flex items-center gap-3 font-bold text-brand-dark cursor-pointer">
+                      <Settings size={18} strokeWidth={2.5} /> My Preferences
+                    </Link>
+                    <button onClick={handleLogout} className="px-4 py-3 hover:bg-red-100 hover:pl-6 transition-all flex items-center gap-3 font-bold text-red-600 w-full text-left cursor-pointer">
+                      <LogOut size={18} strokeWidth={2.5} /> Logout
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // --- LOGGED OUT STATE (DESKTOP) ---
+                <>
+                  <Link href="/login" className="lg:px-4 lg:py-2 xl:px-6 xl:py-2.5 bg-brand-light text-brand-dark font-bold font-sans rounded-full border-2 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#1A5415] transition-all whitespace-nowrap cursor-pointer lg:text-sm xl:text-base">
+                    Login
+                  </Link>
+                  <Link href="/signup" className="lg:px-4 lg:py-2 xl:px-6 xl:py-2.5 bg-brand-cream text-brand-dark font-bold font-sans rounded-full border-2 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#1A5415] transition-all whitespace-nowrap cursor-pointer lg:text-sm xl:text-base">
+                    Sign Up
+                  </Link>
+                </>
+              )
+            )}
+            
             <button 
               onClick={() => setIsWaitlistOpen(true)} 
               className="flex items-center gap-2 lg:px-4 lg:py-2 xl:px-6 xl:py-2.5 bg-brand-primary text-brand-dark font-bold font-sans rounded-full border-2 border-brand-dark shadow-[4px_4px_0px_#1A5415] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#9FD62A] transition-all whitespace-nowrap cursor-pointer lg:text-sm xl:text-base"
@@ -81,7 +184,8 @@ export default function Navbar() {
         <div className={`lg:hidden fixed inset-0 top-20 bg-brand-dark/40 backdrop-blur-sm z-40 transition-opacity duration-300 cursor-pointer ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`} onClick={() => setIsOpen(false)}></div>
 
         {/* Mobile Menu Panel */}
-        <div className={`lg:hidden fixed top-20 left-0 right-0 bg-brand-light border-b-4 border-brand-dark flex flex-col p-5 sm:p-8 md:p-10 gap-4 sm:gap-6 shadow-[0px_8px_0px_#1A5415] font-bold font-sans z-50 transition-transform duration-300 ease-in-out ${isOpen ? 'translate-y-0' : '-translate-y-[150%]'}`}>
+        <div className={`lg:hidden fixed top-20 left-0 right-0 bg-brand-light border-b-4 border-brand-dark flex flex-col p-5 sm:p-8 md:p-10 gap-4 sm:gap-6 shadow-[0px_8px_0px_#1A5415] font-bold font-sans z-50 max-h-[calc(100vh-5rem)] overflow-y-auto transition-transform duration-300 ease-in-out ${isOpen ? 'translate-y-0' : '-translate-y-[150%]'}`}>
+          
           <div className="flex flex-col gap-3 sm:gap-4">
             {[
               { href: "/about", label: "About Us" },
@@ -98,27 +202,65 @@ export default function Navbar() {
           
           <div className="flex flex-col gap-3 sm:gap-4 mt-2 sm:mt-4 pt-5 sm:pt-6 border-t-4 border-brand-dark border-dashed">
             
-            {/* Login and Sign Up side-by-side on mobile to save space */}
-            <div className="flex gap-3 sm:gap-4">
-              <Link 
-                href="/login" 
-                onClick={() => setIsOpen(false)} 
-                className="flex-1 text-center text-lg sm:text-xl md:text-2xl px-4 py-3.5 sm:py-4 bg-brand-light text-brand-dark border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl active:translate-y-1 active:shadow-[2px_2px_0px_#1A5415] sm:active:shadow-[4px_4px_0px_#1A5415] transition-all cursor-pointer"
-              >
-                Login
-              </Link>
-              <Link 
-                href="/signup" 
-                onClick={() => setIsOpen(false)} 
-                className="flex-1 text-center text-lg sm:text-xl md:text-2xl px-4 py-3.5 sm:py-4 bg-brand-cream text-brand-dark border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl active:translate-y-1 active:shadow-[2px_2px_0px_#1A5415] sm:active:shadow-[4px_4px_0px_#1A5415] transition-all cursor-pointer"
-              >
-                Sign Up
-              </Link>
-            </div>
+            {mounted && (
+              isLoggedIn ? (
+                // --- LOGGED IN STATE (MOBILE) ---
+                <div className="flex flex-col border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl overflow-hidden bg-brand-light">
+                  {/* Mobile Profile Header */}
+                  <div className="flex items-center gap-4 p-4 border-b-2 sm:border-b-4 border-brand-dark bg-brand-cream">
+                    {user?.photoUrl ? (
+                      <img src={user.photoUrl} alt="Profile" className="w-12 h-12 rounded-full border-2 border-brand-dark object-cover" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-brand-primary flex items-center justify-center border-2 border-brand-dark">
+                        <User size={24} strokeWidth={2.5} />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-black text-xl truncate">{user?.firstName || 'User'} {user?.lastName}</div>
+                      <div className="text-sm font-semibold opacity-70 truncate">{user?.email}</div>
+                    </div>
+                  </div>
+                  
+                  {/* Mobile Dropdown Links */}
+                  <div className="flex flex-col">
+                    <Link href="/dashboard" onClick={() => setIsOpen(false)} className="px-5 py-4 border-b-2 sm:border-b-4 border-brand-dark flex items-center gap-3 text-lg font-black text-brand-dark active:bg-brand-cream transition-colors">
+                      <LayoutDashboard size={22} strokeWidth={2.5} /> My Dashboard
+                    </Link>
+                    <Link href="/circles" onClick={() => setIsOpen(false)} className="px-5 py-4 border-b-2 sm:border-b-4 border-brand-dark flex items-center gap-3 text-lg font-black text-brand-dark active:bg-brand-cream transition-colors">
+                      <Users size={22} strokeWidth={2.5} /> My Circle
+                    </Link>
+                    <Link href="/preferences" onClick={() => setIsOpen(false)} className="px-5 py-4 border-b-2 sm:border-b-4 border-brand-dark flex items-center gap-3 text-lg font-black text-brand-dark active:bg-brand-cream transition-colors">
+                      <Settings size={22} strokeWidth={2.5} /> My Preferences
+                    </Link>
+                    <button onClick={handleLogout} className="px-5 py-4 flex items-center gap-3 text-lg font-black text-red-600 active:bg-red-100 transition-colors text-left w-full">
+                      <LogOut size={22} strokeWidth={2.5} /> Logout
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                // --- LOGGED OUT STATE (MOBILE) ---
+                <div className="flex gap-3 sm:gap-4">
+                  <Link 
+                    href="/login" 
+                    onClick={() => setIsOpen(false)} 
+                    className="flex-1 text-center text-lg sm:text-xl md:text-2xl px-4 py-3.5 sm:py-4 bg-brand-light text-brand-dark border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl active:translate-y-1 active:shadow-[2px_2px_0px_#1A5415] sm:active:shadow-[4px_4px_0px_#1A5415] transition-all cursor-pointer"
+                  >
+                    Login
+                  </Link>
+                  <Link 
+                    href="/signup" 
+                    onClick={() => setIsOpen(false)} 
+                    className="flex-1 text-center text-lg sm:text-xl md:text-2xl px-4 py-3.5 sm:py-4 bg-brand-cream text-brand-dark border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl active:translate-y-1 active:shadow-[2px_2px_0px_#1A5415] sm:active:shadow-[4px_4px_0px_#1A5415] transition-all cursor-pointer"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )
+            )}
             
             <button 
               onClick={() => { setIsOpen(false); setIsWaitlistOpen(true); }} 
-              className="w-full text-center text-lg sm:text-xl md:text-2xl px-6 py-3.5 sm:py-4 bg-brand-primary text-brand-dark border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl active:translate-y-1 active:shadow-[2px_2px_0px_#1A5415] sm:active:shadow-[4px_4px_0px_#1A5415] transition-all flex justify-center items-center gap-2 cursor-pointer"
+              className="w-full text-center text-lg sm:text-xl md:text-2xl px-6 py-3.5 sm:py-4 bg-brand-primary text-brand-dark border-2 sm:border-4 border-brand-dark shadow-[4px_4px_0px_#1A5415] sm:shadow-[6px_6px_0px_#1A5415] rounded-xl active:translate-y-1 active:shadow-[2px_2px_0px_#1A5415] sm:active:shadow-[4px_4px_0px_#1A5415] transition-all flex justify-center items-center gap-2 cursor-pointer mb-4"
             >
               Join The Movement
             </button>

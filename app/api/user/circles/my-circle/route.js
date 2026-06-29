@@ -11,23 +11,27 @@ export async function GET(request) {
     const { user, error } = await verifyUser(request);
     if (error) return error;
 
-    // 1. Find the user's active circle
-    const activeMembership = await CircleMember.findOne({
+    // 1. Find ALL of the user's active circle memberships (Use findAll instead of findOne)
+    const activeMemberships = await CircleMember.findAll({
       where: { userId: user.id, status: 'active' },
     });
 
-    if (!activeMembership) {
-      return NextResponse.json({ error: "You are not currently in an active circle." }, { status: 404 });
+    // Agar user kisi circle mein nahi hai, toh 404 error ki jagah empty array bhejein
+    // Taaki aapka frontend "You're Not in a Circle Yet!" wala UI dikha sake
+    if (!activeMemberships || activeMemberships.length === 0) {
+      return NextResponse.json({ message: "Success", data: [] }, { status: 200 });
     }
 
-    // 2. Fetch the full circle details including fellow members and events
-    const circleDetails = await Circle.findOne({
-      where: { id: activeMembership.circleId },
+    // Ek array banayein jisme user ke saare Circle IDs hon
+    const circleIds = activeMemberships.map(membership => membership.circleId);
+
+    // 2. Fetch the full circle details for ALL those circle IDs (Use findAll)
+    const circlesDetails = await Circle.findAll({
+      where: { id: circleIds }, // Yeh saare joined circles nikal layega
       include: [
         {
           model: Event,
           as: 'events',
-          order: [['date', 'ASC']]
         },
         {
           model: User,
@@ -38,12 +42,16 @@ export async function GET(request) {
             { model: UserProfile, as: 'profile', attributes: ['profileImage', 'bio', 'socialLink'] }
           ]
         }
+      ],
+      order: [
+        // Events ko date ke hisaab se sort karne ke liye
+        [{ model: Event, as: 'events' }, 'date', 'ASC']
       ]
     });
 
     return NextResponse.json({
       message: "Success",
-      data: circleDetails
+      data: circlesDetails
     }, { status: 200 });
 
   } catch (err) {

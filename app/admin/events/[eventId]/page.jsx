@@ -12,6 +12,15 @@ export default function EventAttendancePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Custom Notification State (Replaces alert)
+  const [notification, setNotification] = useState({ show: false, message: "", type: "success" });
+
+  // Custom Toast Notification Function
+  const showNotification = (message, type = "success") => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => setNotification({ show: false, message: "", type: "success" }), 3000);
+  };
+
   // Fetch attendees from your new GET endpoint
   const fetchAttendance = async () => {
     setLoading(true);
@@ -81,15 +90,15 @@ export default function EventAttendancePage() {
       });
       
       if (res.ok) {
-        alert("Attendance updated successfully!");
+        showNotification("Attendance updated successfully!");
         fetchAttendance(); // Refresh to confirm server state
       } else {
         const err = await res.json();
-        alert("Failed to update: " + err.error);
+        showNotification("Failed to update: " + err.error, "error");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred while saving.");
+      showNotification("An error occurred while saving.", "error");
     } finally {
       setSaving(false);
     }
@@ -143,6 +152,16 @@ export default function EventAttendancePage() {
 
   return (
     <div className="w-full pb-24 md:pb-8 px-4 sm:px-6 lg:px-8 pt-6 md:pt-8 relative">
+      
+      {/* --- CUSTOM TOAST NOTIFICATION --- */}
+      {notification.show && (
+        <div className={`fixed top-8 right-8 z-50 px-6 py-3 rounded-xl font-bold text-sm shadow-xl transition-all duration-300 animate-in slide-in-from-top-5 ${
+          notification.type === 'error' ? 'bg-red-500 text-white' : 'bg-[#4B5E50] text-white'
+        }`}>
+          {notification.message}
+        </div>
+      )}
+
       <button 
         onClick={() => router.back()} 
         className="text-sm font-bold text-gray-400 hover:text-[#D48C71] flex items-center gap-2 mb-6 transition-colors"

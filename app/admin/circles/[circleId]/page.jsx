@@ -13,12 +13,16 @@ export default function CircleDetailsPage() {
 
   // Notification State (Replaces alert)
   const [notification, setNotification] = useState({ show: false, message: "", type: "success" });
+  
+  // Custom Confirmation Modal State (Replaces window.confirm)
+  const [confirmRemove, setConfirmRemove] = useState({ show: false, userId: null });
 
   // Sub-forms states
-  const [newMemberId, setNewMemberId] = useState("");
   const [eventData, setEventData] = useState({ title: '', date: '', location: '', description: '', capacity: '', price: '' });
   const [eventFile, setEventFile] = useState(null);
+  
   const [editFormData, setEditFormData] = useState({});
+  const [editImageFile, setEditImageFile] = useState(null);
 
   // Custom Toast Notification Function
   const showNotification = (message, type = "success") => {
@@ -62,22 +66,28 @@ export default function CircleDetailsPage() {
     e.preventDefault();
     const token = localStorage.getItem("adminToken");
     const data = new FormData();
+    
     Object.keys(editFormData).forEach(key => data.append(key, editFormData[key]));
+    if (editImageFile) {
+      data.append("image", editImageFile);
+    }
 
     const res = await fetch(`/api/admin/circles/${circleId}`, {
       method: "PUT",
       headers: { Authorization: `Bearer ${token}` },
       body: data,
     });
+    
     if (res.ok) {
       showNotification("Circle updated successfully!");
+      setEditImageFile(null); // Reset file input state
       fetchCircle();
     } else {
       showNotification("Failed to update circle.", "error");
     }
   };
 
-  // Helper function used by both "Add Member" and "Approve" button
+  // Helper function used by "Approve" button
   const submitAddMember = async (userId) => {
     const token = localStorage.getItem("adminToken");
     const res = await fetch(`/api/admin/circles/${circleId}/members`, {
@@ -89,7 +99,6 @@ export default function CircleDetailsPage() {
       body: JSON.stringify({ userId }),
     });
     if (res.ok) {
-      setNewMemberId("");
       showNotification("Member added/approved successfully!");
       fetchCircle();
     } else {
@@ -98,19 +107,24 @@ export default function CircleDetailsPage() {
     }
   };
 
-  const handleAddMember = (e) => {
-    e.preventDefault();
-    if (!newMemberId) return;
-    submitAddMember(newMemberId);
+  // Trigger Confirmation Modal
+  const handleRemoveMemberClick = (userId) => {
+    setConfirmRemove({ show: true, userId });
   };
 
-  const handleRemoveMember = async (userId) => {
-    if (!confirm("Remove this member?")) return;
+  // Execute Actual Removal
+  const confirmAndRemoveMember = async () => {
+    const { userId } = confirmRemove;
+    if (!userId) return;
+
     const token = localStorage.getItem("adminToken");
     const res = await fetch(`/api/admin/circles/${circleId}/members?userId=${userId}&exitReason=Admin Removed`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },
     });
+    
+    setConfirmRemove({ show: false, userId: null }); // Close modal
+
     if (res.ok) {
       showNotification("Member removed successfully!");
       fetchCircle();
@@ -183,9 +197,9 @@ export default function CircleDetailsPage() {
           );
         }
 
-        // 3. Otherwise (active), show Remove button
+        // 3. Otherwise (active), show Remove button using new Custom Modal
         return (
-          <button onClick={() => handleRemoveMember(row.id)} className="text-red-500 font-bold hover:underline text-xs">
+          <button onClick={() => handleRemoveMemberClick(row.id)} className="text-red-500 font-bold hover:underline text-xs">
             Remove
           </button>
         );
@@ -217,12 +231,36 @@ export default function CircleDetailsPage() {
   return (
     <div className="w-full pb-24 md:pb-8 px-4 sm:px-6 lg:px-8 pt-6 md:pt-8 relative">
       
-      {/* --- CUSTOM POPUP NOTIFICATION --- */}
+      {/* --- CUSTOM TOAST NOTIFICATION --- */}
       {notification.show && (
         <div className={`fixed top-8 right-8 z-50 px-6 py-3 rounded-xl font-bold text-sm shadow-xl transition-all duration-300 animate-in slide-in-from-top-5 ${
           notification.type === 'error' ? 'bg-red-500 text-white' : 'bg-[#4B5E50] text-white'
         }`}>
           {notification.message}
+        </div>
+      )}
+
+      {/* --- CUSTOM CONFIRMATION MODAL --- */}
+      {confirmRemove.show && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4">
+          <div className="bg-white p-6 rounded-3xl shadow-xl max-w-sm w-full animate-in zoom-in-95 duration-200">
+            <h3 className="text-lg font-bold text-[#4B5E50] mb-2">Remove Member?</h3>
+            <p className="text-sm text-gray-500 mb-6">Are you sure you want to remove this member from the circle? This action can be undone if needed.</p>
+            <div className="flex justify-end gap-3">
+              <button 
+                onClick={() => setConfirmRemove({ show: false, userId: null })} 
+                className="px-4 py-2 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-100 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmAndRemoveMember} 
+                className="bg-red-500 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-red-600 transition-colors"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -282,6 +320,13 @@ export default function CircleDetailsPage() {
                 <input type="date" value={editFormData.endDate} onChange={e => setEditFormData({...editFormData, endDate: e.target.value})} className="w-full border rounded-xl p-3 text-sm" />
               </div>
             </div>
+            
+            {/* Added Edit Image File Input here */}
+            <div>
+              <label className="block text-xs font-bold text-gray-500 mb-1">Circle Image</label>
+              <input type="file" accept="image/*" onChange={e => setEditImageFile(e.target.files[0])} className="w-full border rounded-xl p-2 text-sm bg-gray-50" />
+            </div>
+
             <div>
               <label className="block text-xs font-bold text-gray-500 mb-1">Description</label>
               <textarea rows="3" value={editFormData.description} onChange={e => setEditFormData({...editFormData, description: e.target.value})} className="w-full border rounded-xl p-3 text-sm"></textarea>
@@ -294,13 +339,7 @@ export default function CircleDetailsPage() {
       {/* MEMBERS TAB */}
       {activeTab === "members" && (
         <div className="space-y-6">
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex gap-4 items-end">
-            <div className="flex-1">
-              <label className="block text-xs font-bold text-gray-500 mb-1">Add Member by User ID</label>
-              <input type="text" placeholder="Enter user UUID..." value={newMemberId} onChange={e => setNewMemberId(e.target.value)} className="w-full border rounded-xl p-3 text-sm" />
-            </div>
-            <button onClick={handleAddMember} className="bg-[#D48C71] text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-[#c27a60]">Add</button>
-          </div>
+          {/* Members Table Only - Input Form Removed */}
           <DataTable columns={memberColumns} data={circle.members} loading={false} />
         </div>
       )}
