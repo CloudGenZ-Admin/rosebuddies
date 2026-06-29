@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
   Menu, X, ArrowRight, Heart, ChevronDown, 
-  LogOut, LayoutDashboard, Users, Settings, User 
+  LogOut, LayoutDashboard, Users, Settings, User,
+  Compass // <-- Imported Compass for the Explore icon
 } from 'lucide-react';
 import WaitlistModal from './WaitlistModal'; // Adjust import path if needed
 
@@ -137,10 +138,16 @@ export default function Navbar() {
                     <Link href="/dashboard" onClick={() => setIsDropdownOpen(false)} className="px-4 py-3 border-b-2 border-brand-dark hover:bg-brand-cream hover:pl-6 transition-all flex items-center gap-3 font-bold text-brand-dark cursor-pointer">
                       <LayoutDashboard size={18} strokeWidth={2.5} /> My Dashboard
                     </Link>
+                    
+                    {/* NEW EXPLORE LINK (DESKTOP) */}
+                    <Link href="/explore" onClick={() => setIsDropdownOpen(false)} className="px-4 py-3 border-b-2 border-brand-dark hover:bg-brand-cream hover:pl-6 transition-all flex items-center gap-3 font-bold text-brand-dark cursor-pointer">
+                      <Compass size={18} strokeWidth={2.5} /> Explore Circles
+                    </Link>
+
                     <Link href="/circles" onClick={() => setIsDropdownOpen(false)} className="px-4 py-3 border-b-2 border-brand-dark hover:bg-brand-cream hover:pl-6 transition-all flex items-center gap-3 font-bold text-brand-dark cursor-pointer">
                       <Users size={18} strokeWidth={2.5} /> My Circle
                     </Link>
-                    <Link href="/preferences" onClick={() => setIsDropdownOpen(false)} className="px-4 py-3 border-b-2 border-brand-dark hover:bg-brand-cream hover:pl-6 transition-all flex items-center gap-3 font-bold text-brand-dark cursor-pointer">
+                    <Link href="/dashboard" onClick={() => setIsDropdownOpen(false)} className="px-4 py-3 border-b-2 border-brand-dark hover:bg-brand-cream hover:pl-6 transition-all flex items-center gap-3 font-bold text-brand-dark cursor-pointer">
                       <Settings size={18} strokeWidth={2.5} /> My Preferences
                     </Link>
                     <button onClick={handleLogout} className="px-4 py-3 hover:bg-red-100 hover:pl-6 transition-all flex items-center gap-3 font-bold text-red-600 w-full text-left cursor-pointer">
@@ -226,6 +233,12 @@ export default function Navbar() {
                     <Link href="/dashboard" onClick={() => setIsOpen(false)} className="px-5 py-4 border-b-2 sm:border-b-4 border-brand-dark flex items-center gap-3 text-lg font-black text-brand-dark active:bg-brand-cream transition-colors">
                       <LayoutDashboard size={22} strokeWidth={2.5} /> My Dashboard
                     </Link>
+                    
+                    {/* NEW EXPLORE LINK (MOBILE) */}
+                    <Link href="/explore" onClick={() => setIsOpen(false)} className="px-5 py-4 border-b-2 sm:border-b-4 border-brand-dark flex items-center gap-3 text-lg font-black text-brand-dark active:bg-brand-cream transition-colors">
+                      <Compass size={22} strokeWidth={2.5} /> Explore Circles
+                    </Link>
+
                     <Link href="/circles" onClick={() => setIsOpen(false)} className="px-5 py-4 border-b-2 sm:border-b-4 border-brand-dark flex items-center gap-3 text-lg font-black text-brand-dark active:bg-brand-cream transition-colors">
                       <Users size={22} strokeWidth={2.5} /> My Circle
                     </Link>

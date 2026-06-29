@@ -135,6 +135,17 @@ export default function CircleDetailsPage() {
 
   const handleAddEvent = async (e) => {
     e.preventDefault();
+
+    // Extra validation catch to ensure no negative numbers bypass the input rules
+    if (eventData.capacity !== '' && (Number(eventData.capacity) < 0 || !Number.isInteger(Number(eventData.capacity)))) {
+      showNotification("Capacity must be a positive whole number.", "error");
+      return;
+    }
+    if (eventData.price !== '' && Number(eventData.price) < 0) {
+      showNotification("Price cannot be negative.", "error");
+      return;
+    }
+
     const token = localStorage.getItem("adminToken");
     const data = new FormData();
     Object.keys(eventData).forEach(key => data.append(key, eventData[key]));
@@ -353,9 +364,47 @@ export default function CircleDetailsPage() {
                 <input required type="text" placeholder="Event Title" value={eventData.title} onChange={e => setEventData({...eventData, title: e.target.value})} className="w-full border rounded-xl p-3 text-sm" />
                 <input required type="datetime-local" value={eventData.date} onChange={e => setEventData({...eventData, date: e.target.value})} className="w-full border rounded-xl p-3 text-sm" />
                 <input required type="text" placeholder="Location" value={eventData.location} onChange={e => setEventData({...eventData, location: e.target.value})} className="w-full border rounded-xl p-3 text-sm" />
-                <input type="number" placeholder="Capacity (opt)" value={eventData.capacity} onChange={e => setEventData({...eventData, capacity: e.target.value})} className="w-full border rounded-xl p-3 text-sm" />
-                <input type="number" step="0.01" placeholder="Price (opt)" value={eventData.price} onChange={e => setEventData({...eventData, price: e.target.value})} className="w-full border rounded-xl p-3 text-sm" />
+                
+                <input 
+                  type="number" 
+                  min="0"
+                  step="1"
+                  placeholder="Capacity (opt)" 
+                  value={eventData.capacity} 
+                  onKeyDown={(e) => {
+                    // Prevent entering scientific notation keys, minus, and decimals inside Capacity
+                    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onChange={e => {
+                    const val = e.target.value;
+                    if (val === '' || Number(val) >= 0) setEventData({...eventData, capacity: val})
+                  }} 
+                  className="w-full border rounded-xl p-3 text-sm" 
+                />
+                
+                <input 
+                  type="number" 
+                  min="0"
+                  step="0.01" 
+                  placeholder="Price (opt)" 
+                  value={eventData.price} 
+                  onKeyDown={(e) => {
+                    // Prevent entering scientific notation keys and minus inside Price
+                    if (['e', 'E', '+', '-'].includes(e.key)) {
+                      e.preventDefault();
+                    }
+                  }}
+                  onChange={e => {
+                    const val = e.target.value;
+                    if (val === '' || Number(val) >= 0) setEventData({...eventData, price: val})
+                  }} 
+                  className="w-full border rounded-xl p-3 text-sm" 
+                />
+                
                 <input type="file" accept="image/*" onChange={e => setEventFile(e.target.files[0])} className="w-full text-sm pt-2" />
+                
                 <div className="md:col-span-3 flex justify-end">
                   <button type="submit" className="bg-[#D48C71] text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-[#c27a60]">Create Event</button>
                 </div>

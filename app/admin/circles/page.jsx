@@ -2,10 +2,12 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import DataTable from "../../../components/admin/DataTable";
+import { useRouter } from "next/navigation";
 
 export default function CirclesPage() {
   const [circles, setCircles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const router=useRouter()
   
   // Modals state
   const [showModal, setShowModal] = useState(false);
@@ -33,10 +35,20 @@ export default function CirclesPage() {
   const fetchCircles = async () => {
     setLoading(true);
     const token = localStorage.getItem("adminToken");
+
+    if (!token) {
+      router.push("/admin/login");
+      return;
+    }
     try {
       const res = await fetch("/api/admin/circles", {
         headers: { Authorization: `Bearer ${token}` },
       });
+      if (res.status == 401) {
+        router.push("/admin/login");
+        return;
+      }
+
       const json = await res.json();
       if (res.ok) setCircles(json.data);
     } catch (error) {
