@@ -9,19 +9,21 @@ export default function CircleDetailsPage() {
   const router = useRouter();
   const [circle, setCircle] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("details");
+  const [activeTab, setActiveTab] = useState("details"); // details, members, events
 
-  // Notification State
-  const [notification, setNotification] = useState({ show: false, message: "", type: "" });
+  // Notification State (Replaces alert)
+  const [notification, setNotification] = useState({ show: false, message: "", type: "success" });
 
+  // Sub-forms states
   const [newMemberId, setNewMemberId] = useState("");
   const [eventData, setEventData] = useState({ title: '', date: '', location: '', description: '', capacity: '', price: '' });
   const [eventFile, setEventFile] = useState(null);
   const [editFormData, setEditFormData] = useState({});
 
+  // Custom Toast Notification Function
   const showNotification = (message, type = "success") => {
     setNotification({ show: true, message, type });
-    setTimeout(() => setNotification({ show: false, message: "", type: "" }), 3000);
+    setTimeout(() => setNotification({ show: false, message: "", type: "success" }), 3000);
   };
 
   const fetchCircle = async () => {
@@ -54,6 +56,8 @@ export default function CircleDetailsPage() {
     if (circleId) fetchCircle();
   }, [circleId]);
 
+  // --- API Handlers ---
+
   const handleUpdateCircle = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("adminToken");
@@ -73,7 +77,8 @@ export default function CircleDetailsPage() {
     }
   };
 
-  const submitMemberAdd = async (userId) => {
+  // Helper function used by both "Add Member" and "Approve" button
+  const submitAddMember = async (userId) => {
     const token = localStorage.getItem("adminToken");
     const res = await fetch(`/api/admin/circles/${circleId}/members`, {
       method: "POST",
@@ -83,7 +88,6 @@ export default function CircleDetailsPage() {
       },
       body: JSON.stringify({ userId }),
     });
-    
     if (res.ok) {
       setNewMemberId("");
       showNotification("Member added/approved successfully!");
@@ -97,11 +101,7 @@ export default function CircleDetailsPage() {
   const handleAddMember = (e) => {
     e.preventDefault();
     if (!newMemberId) return;
-    submitMemberAdd(newMemberId);
-  };
-
-  const handleApproveMember = (userId) => {
-    submitMemberAdd(userId);
+    submitAddMember(newMemberId);
   };
 
   const handleRemoveMember = async (userId) => {
@@ -140,43 +140,57 @@ export default function CircleDetailsPage() {
       showNotification("Failed to create event", "error");
     }
   };
+
+  // --- Data Table Configurations ---
   
   const memberColumns = [
     { header: "Name", render: (row) => `${row.firstName} ${row.lastName}` },
     { header: "Email", key: "email" },
-    { header: "Status", render: (row) => (
-        <span className={`px-2 py-1 rounded text-xs font-bold ${
-          row.CircleMember?.status === 'active' ? 'bg-green-100 text-green-700' :
-          row.CircleMember?.status === 'interested' ? 'bg-yellow-100 text-yellow-700' :
-          'bg-gray-100 text-gray-500'
-        }`}>
-          {row.CircleMember?.status || 'active'}
-        </span>
-    )},
-    { header: "Actions", render: (row) => {
+    { 
+      header: "Status", 
+      render: (row) => {
+        const status = row.CircleMember?.status || 'active';
+        let bgStyle = "bg-gray-100 text-gray-500"; // default (left/archived)
+        if (status === 'active') bgStyle = "bg-[#9FD62A]/20 text-[#4B5E50]";
+        if (status === 'interested') bgStyle = "bg-yellow-100 text-yellow-700";
+        
+        return (
+          <span className={`capitalize px-2 py-1 rounded-full text-xs font-bold ${bgStyle}`}>
+            {status}
+          </span>
+        );
+      }
+    },
+    { 
+      header: "Actions", 
+      render: (row) => {
         const status = row.CircleMember?.status;
         
-        // Hide remove button if they already left
+        // 1. If Left, hide remove button
         if (status === 'left') {
           return <span className="text-gray-400 text-xs font-bold">Left</span>;
         }
         
-        // Show Approve button if they are interested
+        // 2. If Interested, show Approve button
         if (status === 'interested') {
           return (
-            <button onClick={() => handleApproveMember(row.id)} className="bg-[#9FD62A] text-[#4B5E50] px-3 py-1 rounded-lg font-bold text-xs hover:bg-[#8bc223]">
+            <button 
+              onClick={() => submitAddMember(row.id)} 
+              className="bg-[#D48C71] text-white px-3 py-1.5 rounded-lg font-bold text-xs hover:bg-[#c27a60] transition-colors"
+            >
               Approve
             </button>
           );
         }
-        
-        // Show Remove button for active members
+
+        // 3. Otherwise (active), show Remove button
         return (
           <button onClick={() => handleRemoveMember(row.id)} className="text-red-500 font-bold hover:underline text-xs">
             Remove
           </button>
         );
-    }}
+      }
+    }
   ];
 
   const eventColumns = [
@@ -203,10 +217,10 @@ export default function CircleDetailsPage() {
   return (
     <div className="w-full pb-24 md:pb-8 px-4 sm:px-6 lg:px-8 pt-6 md:pt-8 relative">
       
-      {/* Custom Popup Notification */}
+      {/* --- CUSTOM POPUP NOTIFICATION --- */}
       {notification.show && (
-        <div className={`fixed top-6 right-6 z-50 px-6 py-3 rounded-xl font-bold shadow-lg text-sm animate-in slide-in-from-top-4 ${
-          notification.type === 'error' ? 'bg-red-500 text-white' : 'bg-[#9FD62A] text-[#4B5E50]'
+        <div className={`fixed top-8 right-8 z-50 px-6 py-3 rounded-xl font-bold text-sm shadow-xl transition-all duration-300 animate-in slide-in-from-top-5 ${
+          notification.type === 'error' ? 'bg-red-500 text-white' : 'bg-[#4B5E50] text-white'
         }`}>
           {notification.message}
         </div>
@@ -221,6 +235,7 @@ export default function CircleDetailsPage() {
         <p className="text-sm sm:text-base text-gray-500 capitalize">{circle.type} Circle • Status: {circle.status}</p>
       </div>
 
+      {/* TABS */}
       <div className="flex gap-4 mb-6 border-b border-gray-200">
         {['details', 'members', 'events'].map(tab => (
           <button 
@@ -233,6 +248,7 @@ export default function CircleDetailsPage() {
         ))}
       </div>
 
+      {/* DETAILS TAB */}
       {activeTab === "details" && (
         <div className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 max-w-2xl">
           <h2 className="text-lg font-bold text-[#4B5E50] mb-4">Edit Circle Info</h2>
@@ -275,6 +291,7 @@ export default function CircleDetailsPage() {
         </div>
       )}
 
+      {/* MEMBERS TAB */}
       {activeTab === "members" && (
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex gap-4 items-end">
@@ -288,6 +305,7 @@ export default function CircleDetailsPage() {
         </div>
       )}
 
+      {/* EVENTS TAB */}
       {activeTab === "events" && (
         <div className="space-y-6">
           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
@@ -304,9 +322,11 @@ export default function CircleDetailsPage() {
                 </div>
              </form>
           </div>
+          {/* Renders the Events Table with the newly added Actions button */}
           <DataTable columns={eventColumns} data={circle.events} loading={false} />
         </div>
       )}
+
     </div>
   );
 }
