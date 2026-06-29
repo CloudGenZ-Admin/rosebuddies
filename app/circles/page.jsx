@@ -276,8 +276,8 @@ export default function MyCirclesPage() {
                           
                           {/* Event Image */}
                           <div className="w-full sm:w-40 h-40 sm:h-auto border-b-4 sm:border-b-0 sm:border-r-4 border-brand-dark bg-brand-light relative shrink-0">
-                            {event.img ? (
-                               <img src={`/uploads/events/${event.id}/${event.img}`} alt={event.title} className="absolute inset-0 w-full h-full object-cover" />
+                            {event.eventImg ? (
+                               <img src={`/uploads/${event.id}/${event.eventImg}`} alt={event.title} className="absolute inset-0 w-full h-full object-cover" />
                             ) : (
                                <div className="absolute inset-0 flex flex-col items-center justify-center opacity-40">
                                   <Calendar size={32} />
@@ -345,7 +345,7 @@ export default function MyCirclesPage() {
                             {/* Member Profile Image */}
                             <div className="w-14 h-14 rounded-full border-4 border-brand-dark bg-brand-secondary overflow-hidden flex-shrink-0">
                               {member.profile?.profileImage ? (
-                                <img src={`/uploads/${member.profile.profileImage}`} alt={member.firstName} className="w-full h-full object-cover" />
+                                <img src={`/uploads/${member.id}/${member.profile.profileImage}`} alt={member.firstName} className="w-full h-full object-cover" />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center font-black text-xl text-brand-dark bg-brand-primary">
                                   {member.firstName?.charAt(0) || 'M'}

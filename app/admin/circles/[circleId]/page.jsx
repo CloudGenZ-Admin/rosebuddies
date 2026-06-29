@@ -69,7 +69,7 @@ export default function CircleDetailsPage() {
     
     Object.keys(editFormData).forEach(key => data.append(key, editFormData[key]));
     if (editImageFile) {
-      data.append("image", editImageFile);
+      data.append("img", editImageFile);
     }
 
     const res = await fetch(`/api/admin/circles/${circleId}`, {
