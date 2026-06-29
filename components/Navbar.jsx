@@ -147,7 +147,7 @@ export default function Navbar() {
                     <Link href="/circles" onClick={() => setIsDropdownOpen(false)} className="px-4 py-3 border-b-2 border-brand-dark hover:bg-brand-cream hover:pl-6 transition-all flex items-center gap-3 font-bold text-brand-dark cursor-pointer">
                       <Users size={18} strokeWidth={2.5} /> My Circle
                     </Link>
-                    <Link href="/dashboard" onClick={() => setIsDropdownOpen(false)} className="px-4 py-3 border-b-2 border-brand-dark hover:bg-brand-cream hover:pl-6 transition-all flex items-center gap-3 font-bold text-brand-dark cursor-pointer">
+                    <Link href="/preferences" onClick={() => setIsDropdownOpen(false)} className="px-4 py-3 border-b-2 border-brand-dark hover:bg-brand-cream hover:pl-6 transition-all flex items-center gap-3 font-bold text-brand-dark cursor-pointer">
                       <Settings size={18} strokeWidth={2.5} /> My Preferences
                     </Link>
                     <button onClick={handleLogout} className="px-4 py-3 hover:bg-red-100 hover:pl-6 transition-all flex items-center gap-3 font-bold text-red-600 w-full text-left cursor-pointer">
