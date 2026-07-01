@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { FooterSubscriber } from "../../../lib/models/footerSubscriber.js";
-import { footerSubscriberSchema } from "../../../lib/validations/forms.js";
+import { FooterSubscriber } from "@/lib/models/index.js";
+import { footerSubscriberSchema } from "@/lib/validations/forms.js";
 
 export async function POST(request) {
   try {

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { MeetPerson } from "../../../lib/models/meetPerson.js";
-import { meetPersonSchema } from "../../../lib/validations/forms.js";
+import { MeetPerson } from "@/lib/models/index.js";
+import { meetPersonSchema } from "@/lib/validations/forms.js";
 
 export async function POST(request) {
   try {

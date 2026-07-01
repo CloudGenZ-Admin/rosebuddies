@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { FooterSubscriber } from "@/lib/models/footerSubscriber.js";
-import { verifyAdmin } from "../../../../lib/middleware/auth.js";
+import { FooterSubscriber } from "@/lib/models/index.js";
+import { verifyAdmin } from "@/lib/middleware/auth.js";
 
 export async function GET(request) {
   try {

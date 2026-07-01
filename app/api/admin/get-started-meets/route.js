@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { GetStartedMeet } from "../../../../lib/models/getStartedMeet.js";
-import { verifyAdmin } from "../../../../lib/middleware/auth.js";
+import { GetStartedMeet } from "@/lib/models/index.js";
+import { verifyAdmin } from "@/lib/middleware/auth.js";
 
 export async function GET(request) {
   try {

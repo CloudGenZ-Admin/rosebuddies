@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { VibeCheck } from "../../../lib/models/vibeCheck.js";
-import { vibeCheckSchema } from "../../../lib/validations/forms.js";
+import { VibeCheck } from "@/lib/models/index.js";
+import { vibeCheckSchema } from "@/lib/validations/forms.js";
 
 export async function POST(request) {
   try {

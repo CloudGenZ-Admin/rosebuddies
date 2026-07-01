@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { verifyAdmin } from "../../../../../../lib/middleware/auth.js";
-import { Circle } from "../../../../../../lib/models/circle.js";
-import { Event } from "../../../../../../lib/models/event.js";
-import { createEventSchema } from "../../../../../../lib/validations/admin.js";
-import { saveUploadedFile } from "../../../../../../lib/utils/uploadService.js";
+import { verifyAdmin } from "@/lib/middleware/auth.js";
+import { Circle } from "@/lib/models/index.js";
+import { Event } from "@/lib/models/index.js";
+import { createEventSchema } from "@/lib/validations/admin.js";
+import { saveUploadedFile } from "@/lib/utils/uploadService.js";
 
 export async function POST(request, { params }) {
   try {

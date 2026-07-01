@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { verifyAdmin } from "../../../../../../lib/middleware/auth.js";
-import { Circle } from "../../../../../../lib/models/circle.js";
-import { CircleMember } from "../../../../../../lib/models/circleMember.js";
-import { User } from "../../../../../../lib/models/user.js";
+import { verifyAdmin } from "@/lib/middleware/auth.js";
+import { Circle } from "@/lib/models/index.js";
+import { CircleMember } from "@/lib/models/index.js";
+import { User } from "@/lib/models/index.js";
 
 export async function POST(request, { params }) {
   try {

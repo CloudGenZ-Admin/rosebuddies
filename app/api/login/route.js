@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
-import { User } from "../../../lib/models/user.js";
-import { userLoginSchema } from "../../../lib/validations/userAuth.js";
+import { User } from "@/lib/models/index.js";
+import { userLoginSchema } from "@/lib/validations/userAuth.js";
 import jwt from "jsonwebtoken";
 
 export async function POST(request) {

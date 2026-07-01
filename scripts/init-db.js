@@ -2,19 +2,19 @@ import "dotenv/config"; // Ensure .env is loaded
 import mysql from "mysql2/promise";
 import bcrypt from "bcryptjs";
 import { sequelize } from "../lib/db.js";
-import { Admin } from "../lib/models/admin.js";
-import { JoinRequest } from "../lib/models/joinRequest.js";
-import { User } from "../lib/models/user.js"; // Import so it syncs
-import { UserProfile } from "../lib/models/userProfile.js";
-import { MeetPerson } from "../lib/models/meetPerson.js";
-import { FooterSubscriber } from "../lib/models/footerSubscriber.js";
-import { VibeCheck } from "../lib/models/vibeCheck.js";
-import { GetStartedMeet } from "../lib/models/getStartedMeet.js";
-import { UserPreference } from "../lib/models/userPreference.js";
-import { Circle } from "../lib/models/circle.js";
-import { CircleMember } from "../lib/models/circleMember.js";
-import { Event } from "../lib/models/event.js";
-import { EventAttendance } from "../lib/models/eventAttendance.js";
+import { Admin } from "../lib/models/index.js";
+import { JoinRequest } from "../lib/models/index.js";
+import { User } from "../lib/models/index.js"; // Import so it syncs
+import { UserProfile } from "../lib/models/index.js";
+import { MeetPerson } from "../lib/models/index.js";
+import { FooterSubscriber } from "../lib/models/index.js";
+import { VibeCheck } from "../lib/models/index.js";
+import { GetStartedMeet } from "../lib/models/index.js";
+import { UserPreference } from "../lib/models/index.js";
+import { Circle } from "../lib/models/index.js";
+import { CircleMember } from "../lib/models/index.js";
+import { Event } from "../lib/models/index.js";
+import { EventAttendance } from "../lib/models/index.js";
 
 async function initDB() {
   try {

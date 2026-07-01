@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { verifyUser } from "../../../../lib/middleware/auth.js";
-import { UserPreference } from "../../../../lib/models/userPreference.js";
-import { userPreferenceSchema } from "../../../../lib/validations/userAuth.js";
+import { verifyUser } from "@/lib/middleware/auth.js";
+import { UserPreference } from "@/lib/models/index.js";
+import { userPreferenceSchema } from "@/lib/validations/userAuth.js";
 
 export async function GET(request) {
   try {

@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
-import { verifyAdmin } from "../../../../lib/middleware/auth.js";
-import { Circle } from "../../../../lib/models/circle.js";
-import { CircleMember } from "../../../../lib/models/circleMember.js";
-import { Event } from "../../../../lib/models/event.js";
-import { User } from "../../../../lib/models/user.js";
-import { EventAttendance } from "../../../../lib/models/eventAttendance.js";
-import { createCircleSchema } from "../../../../lib/validations/admin.js";
-import { saveUploadedFile } from "../../../../lib/utils/uploadService.js";
-import { sequelize } from "../../../../lib/db.js";
+import { verifyAdmin } from "@/lib/middleware/auth.js";
+import { Circle } from "@/lib/models/index.js";
+import { CircleMember } from "@/lib/models/index.js";
+import { Event } from "@/lib/models/index.js";
+import { User } from "@/lib/models/index.js";
+import { EventAttendance } from "@/lib/models/index.js";
+import { createCircleSchema } from "@/lib/validations/admin.js";
+import { saveUploadedFile } from "@/lib/utils/uploadService.js";
+import { sequelize } from "@/lib/db.js";
 
 export async function GET(request) {
   try {
@@ -26,7 +26,7 @@ export async function GET(request) {
               model: User,
               as: 'attendees',
               attributes: ['id', 'firstName', 'lastName'],
-              through: { attributes: ['rsvpStatus', 'didAttend', 'noShowFlag'] }
+              through: { attributes: ['rsvpStatus', 'didAttend'] }
             }
           ]
         },

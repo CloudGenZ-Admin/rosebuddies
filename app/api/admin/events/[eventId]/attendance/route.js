@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { verifyAdmin } from "../../../../../../lib/middleware/auth.js";
-import { EventAttendance } from "../../../../../../lib/models/eventAttendance.js";
-import { Event } from "../../../../../../lib/models/event.js";
-import { User } from "../../../../../../lib/models/user.js";
+import { verifyAdmin } from "@/lib/middleware/auth.js";
+import { EventAttendance } from "@/lib/models/index.js";
+import { Event } from "@/lib/models/index.js";
+import { User } from "@/lib/models/index.js";
 
 export async function GET(request, { params }) {
   try {
@@ -18,7 +18,7 @@ export async function GET(request, { params }) {
           model: User, 
           as: 'attendees',
           attributes: ['id', 'firstName', 'lastName', 'email'],
-          through: { attributes: ['rsvpStatus', 'didAttend', 'noShowFlag'] }
+          through: { attributes: ['rsvpStatus', 'didAttend'] }
         }
       ]
     });
@@ -47,7 +47,7 @@ export async function PUT(request, { params }) {
     const body = await request.json();
 
     // Expecting an array of attendance updates: 
-    // [{ userId: 1, didAttend: true, noShowFlag: false }, ...]
+    // [{ userId: 1, didAttend: true }, ...]
     const { attendanceRecords } = body;
 
     if (!Array.isArray(attendanceRecords)) {
@@ -58,21 +58,19 @@ export async function PUT(request, { params }) {
     // In a real production app with massive records, a bulk insertion/update mechanism would be better,
     // but a Promise.all map is perfectly fine for small groups (5-20 people).
     const updatePromises = attendanceRecords.map(async (record) => {
-      const { userId, didAttend, noShowFlag } = record;
+      const { userId, didAttend } = record;
       
       const [attendance, created] = await EventAttendance.findOrCreate({
         where: { eventId, userId },
         defaults: {
           didAttend: didAttend !== undefined ? didAttend : false,
-          noShowFlag: noShowFlag !== undefined ? noShowFlag : false,
           rsvpStatus: 'going' // Default assuming if admin marks them, they were supposed to be going
         }
       });
 
       if (!created) {
         return attendance.update({
-          didAttend: didAttend !== undefined ? didAttend : attendance.didAttend,
-          noShowFlag: noShowFlag !== undefined ? noShowFlag : attendance.noShowFlag
+          didAttend: didAttend !== undefined ? didAttend : attendance.didAttend
         });
       }
       return attendance;

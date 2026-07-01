@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { verifyUser } from "../../../../../../lib/middleware/auth.js";
-import { Circle } from "../../../../../../lib/models/circle.js";
-import { CircleMember } from "../../../../../../lib/models/circleMember.js";
+import { verifyUser } from "@/lib/middleware/auth.js";
+import { Circle } from "@/lib/models/index.js";
+import { CircleMember } from "@/lib/models/index.js";
 
 export async function POST(request, { params }) {
   try {
@@ -21,6 +21,15 @@ export async function POST(request, { params }) {
     });
 
     if (existingMembership) {
+      if (existingMembership.status === 'left') {
+        // User left previously, but wants to rejoin.
+        await existingMembership.update({ status: 'interested', exitReason: null });
+        return NextResponse.json({
+          message: "Interest expressed successfully! Admin will review your profile.",
+          data: existingMembership
+        }, { status: 200 });
+      }
+
       return NextResponse.json({ error: `You are already marked as ${existingMembership.status} for this circle.` }, { status: 400 });
     }
 

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { VibeCheck } from "../../../../lib/models/vibeCheck.js";
-import { verifyAdmin } from "../../../../lib/middleware/auth.js";
+import { VibeCheck } from "@/lib/models/index.js";
+import { verifyAdmin } from "@/lib/middleware/auth.js";
 
 export async function GET(request) {
   try {

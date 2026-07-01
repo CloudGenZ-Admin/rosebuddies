@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { verifyUser } from "../../../../lib/middleware/auth.js";
-import { User } from "../../../../lib/models/user.js";
-import { UserProfile } from "../../../../lib/models/userProfile.js";
-import { completeProfileSchema } from "../../../../lib/validations/userAuth.js";
-import { saveUploadedFile } from "../../../../lib/utils/uploadService.js";
+import { verifyUser } from "@/lib/middleware/auth.js";
+import { User } from "@/lib/models/index.js";
+import { UserProfile } from "@/lib/models/index.js";
+import { completeProfileSchema } from "@/lib/validations/userAuth.js";
+import { saveUploadedFile } from "@/lib/utils/uploadService.js";
 
 export async function POST(request) {
   try {

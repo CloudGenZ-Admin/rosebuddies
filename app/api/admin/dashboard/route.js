@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { verifyAdmin } from "../../../../lib/middleware/auth.js";
-import { User } from "../../../../lib/models/user.js";
-import { Circle } from "../../../../lib/models/circle.js";
-import { Event } from "../../../../lib/models/event.js";
+import { verifyAdmin } from "@/lib/middleware/auth.js";
+import { User } from "@/lib/models/index.js";
+import { Circle } from "@/lib/models/index.js";
+import { Event } from "@/lib/models/index.js";
 import { Op } from "sequelize";
 
 export async function GET(request) {

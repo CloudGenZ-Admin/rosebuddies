@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { MeetPerson } from "../../../../lib/models/meetPerson.js";
-import { verifyAdmin } from "../../../../lib/middleware/auth.js";
+import { MeetPerson } from "@/lib/models/index.js";
+import { verifyAdmin } from "@/lib/middleware/auth.js";
 
 export async function GET(request) {
   try {

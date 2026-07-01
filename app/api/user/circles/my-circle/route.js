@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
-import { verifyUser } from "../../../../../lib/middleware/auth.js";
-import { CircleMember } from "../../../../../lib/models/circleMember.js";
-import { Circle } from "../../../../../lib/models/circle.js";
-import { User } from "../../../../../lib/models/user.js";
-import { UserProfile } from "../../../../../lib/models/userProfile.js";
-import { Event } from "../../../../../lib/models/event.js";
+import { verifyUser } from "@/lib/middleware/auth.js";
+import { CircleMember } from "@/lib/models/index.js";
+import { Circle } from "@/lib/models/index.js";
+import { User } from "@/lib/models/index.js";
+import { UserProfile } from "@/lib/models/index.js";
+import { Event } from "@/lib/models/index.js";
 
 
-import { EventAttendance } from "../../../../../lib/models/eventAttendance.js";
+import { EventAttendance } from "@/lib/models/index.js";
 
 export async function GET(request) {
   try {

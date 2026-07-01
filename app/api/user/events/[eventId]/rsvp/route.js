@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { verifyUser } from "../../../../../../lib/middleware/auth.js";
-import { Event } from "../../../../../../lib/models/event.js";
-import { EventAttendance } from "../../../../../../lib/models/eventAttendance.js";
+import { verifyUser } from "@/lib/middleware/auth.js";
+import { Event } from "@/lib/models/index.js";
+import { EventAttendance } from "@/lib/models/index.js";
 
 export async function POST(request, { params }) {
   try {

@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { Admin } from "../../../../lib/models/admin.js";
-import { adminLoginSchema } from "../../../../lib/validations/adminAuth.js";
+import { Admin } from "@/lib/models/index.js";
+import { adminLoginSchema } from "@/lib/validations/adminAuth.js";
 
 export async function POST(request) {
   try {

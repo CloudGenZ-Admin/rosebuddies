@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
-import { verifyAdmin } from "../../../../lib/middleware/auth.js";
-import { User } from "../../../../lib/models/user.js";
-import { UserProfile } from "../../../../lib/models/userProfile.js";
+import { verifyAdmin } from "@/lib/middleware/auth.js";
+import { User } from "@/lib/models/index.js";
+import { UserProfile } from "@/lib/models/index.js";
 import { Op } from "sequelize";
 
 export async function GET(request) {
@@ -23,7 +23,7 @@ export async function GET(request) {
 
     const users = await User.findAll({
       where: whereClause,
-      attributes: ["id", "firstName", "lastName", "email", "profileCompleted", "createdAt"],
+      attributes: ["id", "firstName", "lastName", "email", "profileCompleted", "createdAt", "paymentStatus", "accountStatus"],
       include: [
         { model: UserProfile, as: 'profile', attributes: ["phoneNumber"] }
       ],

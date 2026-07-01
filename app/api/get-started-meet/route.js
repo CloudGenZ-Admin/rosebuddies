@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { GetStartedMeet } from "../../../lib/models/getStartedMeet.js";
-import { getStartedMeetSchema } from "../../../lib/validations/forms.js";
+import { GetStartedMeet } from "@/lib/models/index.js";
+import { getStartedMeetSchema } from "@/lib/validations/forms.js";
 
 export async function POST(request) {
   try {

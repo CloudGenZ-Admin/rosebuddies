@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { verifyUser } from "../../../../../lib/middleware/auth.js";
-import { Circle } from "../../../../../lib/models/circle.js";
-import { Event } from "../../../../../lib/models/event.js";
+import { verifyUser } from "@/lib/middleware/auth.js";
+import { Circle } from "@/lib/models/index.js";
+import { Event } from "@/lib/models/index.js";
+import { CircleMember } from "@/lib/models/index.js";
 
 export async function GET(request) {
   try {
@@ -22,9 +23,26 @@ export async function GET(request) {
       ]
     });
 
+    // Get the logged-in user's memberships to see if they've already expressed interest
+    const userMemberships = await CircleMember.findAll({
+      where: { userId: user.id }
+    });
+
+    const membershipMap = {};
+    userMemberships.forEach(m => {
+      membershipMap[m.circleId] = m.status;
+    });
+
+    // Map over the forming circles to append the userStatus
+    const formattedCircles = formingCircles.map(c => {
+      const plainCircle = c.toJSON();
+      plainCircle.userStatus = membershipMap[c.id] || null;
+      return plainCircle;
+    });
+
     return NextResponse.json({
       message: "Success",
-      data: formingCircles
+      data: formattedCircles
     }, { status: 200 });
 
   } catch (err) {

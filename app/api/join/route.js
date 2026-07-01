@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { JoinRequest } from "../../../lib/models/joinRequest.js";
-import { joinMovementSchema } from "../../../lib/validations/forms.js";
+import { JoinRequest } from "@/lib/models/index.js";
+import { joinMovementSchema } from "@/lib/validations/forms.js";
 
 export async function POST(request) {
   try {

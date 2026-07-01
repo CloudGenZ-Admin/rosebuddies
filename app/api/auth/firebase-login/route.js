@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { admin } from "../../../../lib/firebaseAdmin.js";
-import { User } from "../../../../lib/models/user.js";
+import { admin } from "@/lib/firebaseAdmin.js";
+import { User } from "@/lib/models/index.js";
 import jwt from "jsonwebtoken";
 
 export async function POST(request) {
